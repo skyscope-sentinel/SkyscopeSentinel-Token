@@ -3,49 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKYSCOPESENTINEL (SKYSCOPE) - Interactive Blueprint</title>
+    <title>SKYSCOPE Miner - Revolutionize Your Kaspa Mining</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #1a202c; /* Dark background (e.g., Tailwind's gray-900) */
-            color: #e2e8f0; /* Light text (e.g., Tailwind's gray-200) */
+            background-color: #0D0D0D; /* Near black */
+            color: #E0E0E0; /* Light gray for text */
+        }
+        .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
         }
         .nav-link {
             transition: all 0.3s ease;
             transform-origin: left;
+            font-weight: 500;
         }
         .nav-link.active {
-            color: #68d391; /* Brighter Green accent for active (e.g., Tailwind's green-400) */
+            color: #4ADE80; /* Vibrant Green (Tailwind green-400) */
             transform: scale(1.05);
-            font-weight: 600;
+            font-weight: 700;
+            border-left: 3px solid #4ADE80;
+            padding-left: 0.5rem; /* Add padding for the border */
         }
         .nav-link:hover {
-            color: #f6e05e; /* Brighter Gold accent for hover (e.g., Tailwind's yellow-400) */
+            color: #818CF8; /* Vibrant Indigo (Tailwind indigo-400) */
         }
         .glass-card {
-            background: rgba(45, 55, 72, 0.7); /* Darker glass effect (e.g., Tailwind's gray-800 with opacity) */
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(74, 85, 104, 0.5); /* Darker border (e.g., Tailwind's gray-700 with opacity) */
+            background: linear-gradient(145deg, rgba(30, 30, 40, 0.7), rgba(50, 50, 60, 0.5));
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(100, 116, 139, 0.3); /* Tailwind slate-500 with opacity */
+            border-radius: 1rem; /* More rounded */
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
-        .tab {
-            color: #a0aec0; /* Medium-light text for inactive tabs (e.g., Tailwind's gray-500) */
-            background-color: rgba(45, 55, 72, 0.5); /* Darker background for inactive tabs */
-            border: 1px solid rgba(74, 85, 104, 0.5);
+        .tab { /* For "Effortless Earning" section, if tabs are used */
+            color: #A3A3A3; /* Tailwind neutral-400 */
+            background: rgba(51, 65, 85, 0.5); /* Tailwind slate-700 with opacity */
+            border: 1px solid rgba(71, 85, 105, 0.5); /* Tailwind slate-600 */
+            border-radius: 0.75rem; /* Rounded tabs */
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
         }
         .tab:hover {
-            background-color: rgba(74, 85, 104, 0.7); /* Slightly lighter on hover */
+            background: rgba(71, 85, 105, 0.7); /* Tailwind slate-600 */
+            color: #F5F5F5; /* Tailwind neutral-100 */
         }
         .tab.active {
-            background-color: #4a5568; /* Darker Green accent (Tailwind gray-700 as placeholder - can be themed green) */
-            color: #f7fafc; /* Bright white text for active tab (Tailwind gray-100) */
-            border-color: #68d391;
+            background: linear-gradient(to right, #4ADE80, #3B82F6); /* Green to Blue gradient */
+            color: #FFFFFF;
+            font-weight: 600;
+            border-color: #4ADE80;
         }
-        .chart-container {
+        .chart-container { /* For the conceptual performance chart */
             position: relative;
             width: 100%;
             max-width: 800px;
@@ -59,186 +73,195 @@
                 height: 350px;
             }
         }
-        /* Ensure Chart.js text is light */
-        .chartjs-render-monitor {
-            color: #e2e8f0 !important; /* Light text for chart labels */
+        .gradient-text {
+            background: linear-gradient(to right, #4ADE80, #818CF8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .primary-button {
+            background: linear-gradient(to right, #4ADE80, #3B82F6);
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px 0 rgba(74, 222, 128, 0.4);
+        }
+        .primary-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px 0 rgba(74, 222, 128, 0.6);
+        }
+        .secondary-button {
+            border: 2px solid #4ADE80;
+            color: #4ADE80;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .secondary-button:hover {
+            background-color: rgba(74, 222, 128, 0.1);
+            color: #6EE7B7; /* Lighter green */
         }
     </style>
 </head>
 <body class="flex">
 
     <!-- Sidebar Navigation -->
-    <nav class="hidden lg:block w-64 h-screen fixed top-0 left-0 bg-gray-800/50 p-8 border-r border-gray-700/50">
-        <h2 class="text-xl font-bold text-gray-100 mb-2">SKYSCOPE</h2>
-        <p class="text-sm text-gray-400 mb-8">Interactive Blueprint</p>
-        <ul id="desktop-nav" class="space-y-4">
-            <li><a href="#hero" class="nav-link block text-gray-300 hover:text-yellow-400 font-medium">Introduction</a></li>
-            <li><a href="#vision" class="nav-link block text-gray-300 hover:text-yellow-400 font-medium">The Vision</a></li>
-            <li><a href="#technology" class="nav-link block text-gray-300 hover:text-yellow-400 font-medium">Technology Stack</a></li>
-            <li><a href="#strategy" class="nav-link block text-gray-300 hover:text-yellow-400 font-medium">Growth Strategy</a></li>
-            <li><a href="#risks" class="nav-link block text-gray-300 hover:text-yellow-400 font-medium">Critical Considerations</a></li>
-            <li><a href="#blueprint" class="nav-link block text-gray-300 hover:text-yellow-400 font-medium">The Blueprint</a></li>
-            <li><a href="#creator" class="nav-link block text-gray-300 hover:text-yellow-400 font-medium">About the Creator</a></li>
+    <nav class="hidden lg:block w-72 h-screen fixed top-0 left-0 bg-[#171717] p-8 border-r border-slate-700/50 shadow-2xl">
+        <h2 class="text-3xl font-bold text-white mb-1 font-orbitron">SKYSCOPE</h2>
+        <p class="text-sm text-slate-400 mb-10">Advanced Kaspa Mining</p>
+        <ul id="desktop-nav" class="space-y-3">
+            <li><a href="#hero" class="nav-link block text-slate-300 active">Welcome</a></li>
+            <li><a href="#vision" class="nav-link block text-slate-300">The Vision</a></li>
+            <li><a href="#innovative-mining" class="nav-link block text-slate-300">Innovative Mining</a></li>
+            <li><a href="#effortless-earning" class="nav-link block text-slate-300">Effortless Earning</a></li>
+            <li><a href="#global-reach" class="nav-link block text-slate-300">Miner Setup</a></li>
+            <li><a href="#profit" class="nav-link block text-slate-300">Miner Benefits</a></li>
+            <li><a href="#blueprint" class="nav-link block text-slate-300">Core Features</a></li>
+            <li><a href="#creator" class="nav-link block text-slate-300">About Us</a></li>
         </ul>
     </nav>
 
     <!-- Mobile Navigation -->
-     <div class="lg:hidden fixed bottom-0 left-0 w-full bg-gray-800/90 backdrop-blur-sm border-t border-gray-700 z-50">
-        <div class="flex justify-around p-2">
-            <a href="#hero" class="text-gray-300 hover:text-green-400 p-2 text-xs">Home</a>
-            <a href="#vision" class="text-gray-300 hover:text-green-400 p-2 text-xs">Vision</a>
-            <a href="#technology" class="text-gray-300 hover:text-green-400 p-2 text-xs">Tech</a>
-            <a href="#strategy" class="text-gray-300 hover:text-green-400 p-2 text-xs">Strategy</a>
-            <a href="#risks" class="text-gray-300 hover:text-green-400 p-2 text-xs">Risks</a>
+     <div class="lg:hidden fixed bottom-0 left-0 w-full bg-[#171717]/95 backdrop-blur-sm border-t border-slate-700 z-50">
+        <div class="flex justify-around p-3">
+            <a href="#hero" class="text-slate-300 hover:text-green-400 p-2 text-xs">Home</a>
+            <a href="#vision" class="text-slate-300 hover:text-green-400 p-2 text-xs">Vision</a>
+            <a href="#innovative-mining" class="text-slate-300 hover:text-green-400 p-2 text-xs">Tech</a>
+            <a href="#effortless-earning" class="text-slate-300 hover:text-green-400 p-2 text-xs">Earn</a>
+            <a href="#global-reach" class="text-slate-300 hover:text-green-400 p-2 text-xs">Setup</a>
         </div>
     </div>
 
     <!-- Main Content -->
-    <main class="w-full lg:ml-64 p-4 md:p-8 lg:p-12 text-gray-200">
+    <main class="w-full lg:ml-72 p-4 md:p-8 lg:p-12">
 
         <!-- Section 1: Hero -->
         <section id="hero" class="min-h-screen flex flex-col justify-center items-start text-left">
             <div class="max-w-4xl">
-                <span class="text-sm font-semibold uppercase text-yellow-400 tracking-wider">SKYSCOPESENTINEL (SKYSCOPE)</span>
-                <h1 class="text-4xl md:text-6xl font-bold text-gray-100 mt-2 mb-4 leading-tight">An AI-Driven, Multi-Asset Pegged Cryptocurrency on Solana.</h1>
-                <p class="text-lg md:text-xl text-gray-300 max-w-3xl">
-                    This interactive blueprint explores SKYSCOPE, a novel token designed to redefine digital asset value. It delves into its foundational design, technical implementation, strategic pathways for adoption, and the critical regulatory landscape, translating a comprehensive analysis into an explorable experience.
+                <span class="text-md font-semibold uppercase text-green-400 tracking-wider font-orbitron">SKYSCOPE KASPA MINER</span>
+                <h1 class="text-5xl md:text-7xl font-bold text-white mt-3 mb-6 leading-tight font-orbitron">
+                    Mine Kaspa Smarter. <span class="gradient-text">Not Harder.</span>
+                </h1>
+                <p class="text-lg md:text-xl text-slate-300 max-w-3xl">
+                    Introducing SKYSCOPE Miner: The revolutionary Python application designed for Intel CPUs, leveraging our conceptual "skyscope-hash-Q" technology to optimize Kaspa (KAS) mining with your existing hardware and RAM. Experience enhanced efficiency and a user-friendly approach to cryptocurrency mining.
                 </p>
+                <div class="mt-10 flex space-x-4">
+                    <a href="#effortless-earning" class="primary-button">Start Mining KAS</a>
+                    <a href="#blueprint" class="secondary-button">Discover Features</a>
+                </div>
             </div>
         </section>
 
         <!-- Section 2: The Vision -->
         <section id="vision" class="py-20">
-            <h2 class="text-3xl font-bold mb-2 text-gray-100">The Foundational Vision</h2>
-            <p class="text-lg text-gray-300 mb-12 max-w-3xl">This section breaks down the core economic model of SKYSCOPE. We'll explore its unique AI-driven pegging mechanism that tracks a basket of assets and the innovative staking layers designed to generate intrinsic value growth for holders.</p>
+            <h2 class="text-4xl font-bold mb-4 text-center font-orbitron text-white">The <span class="gradient-text">SKYSCOPE</span> Vision</h2>
+            <p class="text-lg text-slate-300 mb-12 max-w-3xl mx-auto text-center">We believe Kaspa mining should be accessible, efficient, and rewarding for everyone. SKYSCOPE Miner is engineered to empower CPU miners, turning standard hardware into a potent tool for earning KAS through innovative resource optimization.</p>
 
-            <div class="grid md:grid-cols-2 gap-8 items-center">
-                <!-- AI-Powered Peg Diagram -->
-                <div class="glass-card rounded-2xl p-6">
-                    <h3 class="font-bold text-xl mb-4 text-gray-100">The AI-Powered Multi-Asset Peg</h3>
-                    <p class="text-gray-300 mb-6">SKYSCOPE is a synthetic asset designed to mirror the combined value of a basket of leading digital currencies. An advanced AI model orchestrates this peg, dynamically rebalancing to maintain stability and reflect true market value.</p>
-                    <div class="relative w-full h-80 flex items-center justify-center p-4">
-                        <!-- Center Token -->
-                        <div class="absolute z-10 flex flex-col items-center">
-                            <div class="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center shadow-lg">
-                                <span class="text-white font-bold text-lg">SKYSCOPE</span>
-                            </div>
-                            <span class="text-xs mt-2 font-semibold text-gray-200">AI Core</span>
-                        </div>
-
-                        <!-- Connecting Lines & Pegged Assets -->
-                        <div class="absolute w-full h-full">
-                            <div class="peg-asset absolute top-0 left-1/2 -translate-x-1/2 -mt-4 text-center">
-                                <div class="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center shadow-md border border-gray-600"><span class="font-bold text-blue-400">BTC</span></div>
-                                <span class="text-xs mt-1 block text-gray-300">Bitcoin</span>
-                            </div>
-                            <div class="peg-asset absolute bottom-0 left-1/2 -translate-x-1/2 -mb-4 text-center">
-                                <div class="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center shadow-md border border-gray-600"><span class="font-bold text-purple-400">SOL</span></div>
-                                <span class="text-xs mt-1 block text-gray-300">Solana</span>
-                            </div>
-                            <div class="peg-asset absolute top-1/2 left-0 -translate-y-1/2 -ml-4 text-center">
-                                <div class="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center shadow-md border border-gray-600"><span class="font-bold text-green-400">USDT</span></div>
-                                <span class="text-xs mt-1 block text-gray-300">Tether</span>
-                            </div>
-                            <div class="peg-asset absolute top-1/2 right-0 -translate-y-1/2 -mr-4 text-center">
-                                <div class="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center shadow-md border border-gray-600"><span class="font-bold text-blue-300">XRP</span></div>
-                                <span class="text-xs mt-1 block text-gray-300">Ripple</span>
-                            </div>
-                        </div>
+            <div class="grid md:grid-cols-2 gap-8 items-stretch">
+                <!-- Efficiency by Design -->
+                <div class="glass-card p-8 flex flex-col">
+                    <h3 class="font-orbitron text-2xl font-bold mb-4 text-white">Efficiency by Design: Maximize Your CPU & RAM</h3>
+                    <p class="text-slate-300 mb-6 flex-grow">SKYSCOPE Miner isn't just another mining tool. Our "skyscope-hash-Q" approach is conceptually designed to intelligently utilize your Intel CPU cores **and** system RAM (configurable 25-80%) to enhance Kaspa mining performance. This means potentially higher effective hashrates from hardware you already own.</p>
+                    <div class="mt-auto grid grid-cols-2 gap-4 text-center">
+                         <div class="p-4 bg-slate-700/30 rounded-lg">
+                            <span class="text-5xl text-green-400 block mb-2">⚙️</span>
+                            <span class="font-semibold text-md text-white">CPU Optimization</span>
+                            <span class="text-xs text-slate-400 block">Leverages all cores</span>
+                         </div>
+                         <div class="p-4 bg-slate-700/30 rounded-lg">
+                            <span class="text-5xl text-indigo-400 block mb-2">🧠</span>
+                            <span class="font-semibold text-md text-white">RAM Boost (Conceptual)</span>
+                            <span class="text-xs text-slate-400 block">"skyscope-hash-Q"</span>
+                         </div>
                     </div>
                 </div>
 
-                <!-- Staking & Rewards -->
-                <div class="glass-card rounded-2xl p-6">
-                    <h3 class="font-bold text-xl mb-4 text-gray-100">Sustainable Staking Layers</h3>
-                     <p class="text-gray-300 mb-6">SKYSCOPE aims to offer lucrative staking rewards. The system is designed to leverage the underlying pegged assets for yield generation across DeFi, enhancing capital efficiency and creating multi-layered earnings for holders. Select a mechanism below to learn more.</p>
-                    <div id="staking-tabs" class="flex flex-wrap gap-2 mb-4">
-                        <button data-tab="native" class="tab text-sm px-4 py-2 rounded-full transition duration-300">Native Staking</button>
-                        <button data-tab="liquid" class="tab text-sm px-4 py-2 rounded-full transition duration-300">Liquid Staking</button>
-                        <button data-tab="yield" class="tab text-sm px-4 py-2 rounded-full transition duration-300">Yield Farming</button>
-                    </div>
-                    <div id="staking-content">
-                        <!-- Content will be injected by JS -->
+                <!-- Accessible Mining -->
+                <div class="glass-card p-8 flex flex-col">
+                    <h3 class="font-orbitron text-2xl font-bold mb-4 text-white">Accessible & Global Kaspa Mining</h3>
+                    <p class="text-slate-300 mb-6 flex-grow">Join a global community of Kaspa miners. SKYSCOPE Miner aims to make KAS mining more inclusive, compatible with standard `kaspad` nodes, and designed for robust operation. We handle the complexities so you can focus on earning.</p>
+                     <div class="mt-auto grid grid-cols-2 gap-4 text-center">
+                        <div class="p-4 bg-slate-700/30 rounded-lg">
+                           <span class="text-5xl text-green-400 block mb-2">🌍</span>
+                           <span class="font-semibold text-md text-white">Join Global Network</span>
+                           <span class="text-xs text-slate-400 block">Mine KAS Anywhere</span>
+                        </div>
+                        <div class="p-4 bg-slate-700/30 rounded-lg">
+                           <span class="text-5xl text-indigo-400 block mb-2">🤝</span>
+                           <span class="font-semibold text-md text-white">User-Friendly CLI</span>
+                           <span class="text-xs text-slate-400 block">Easy Setup & Use</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="mt-12">
-                 <h3 class="font-bold text-xl mb-4 text-center text-gray-100">Comparing Potential Staking Yields</h3>
-                 <p class="text-gray-300 text-center max-w-2xl mx-auto mb-6">This chart illustrates the potential APY ranges for different staking mechanisms as outlined in the analysis. Note that higher yields often correspond with higher risks, such as smart contract vulnerabilities or impermanent loss.</p>
-                 <div class="chart-container glass-card rounded-2xl p-4">
-                     <canvas id="stakingChart"></canvas>
-                 </div>
             </div>
         </section>
 
-        <!-- Section 3: Technology -->
-        <section id="technology" class="py-20 bg-gray-800/30 rounded-2xl">
-             <h2 class="text-3xl font-bold mb-2 text-gray-100">The Technology Stack</h2>
-             <p class="text-lg text-gray-300 mb-12 max-w-3xl">SKYSCOPE is built on the Solana blockchain to leverage its speed and scalability. This section covers the core technical implementation, the token creation process, and the paramount importance of smart contract security.</p>
-             <div class="grid md:grid-cols-3 gap-8 mb-12">
-                 <div class="text-center p-6">
-                     <div class="text-4xl text-green-400 mb-2">⚡️</div>
-                     <h4 class="font-semibold text-lg text-gray-100">High Throughput</h4>
-                     <p class="text-gray-300 text-sm">Solana processes tens of thousands of transactions per second, ensuring a seamless user experience.</p>
+        <!-- Section 3: Innovative Mining Technology (skyscope-hash-Q Engine) -->
+        <section id="innovative-mining" class="py-20 bg-slate-800/30">
+             <h2 class="text-4xl font-bold mb-4 text-center font-orbitron text-white">Innovative Mining: The <span class="gradient-text">skyscope-hash-Q</span> Engine</h2>
+             <p class="text-lg text-slate-300 mb-12 max-w-3xl mx-auto text-center">The heart of SKYSCOPE Miner is the conceptual "skyscope-hash-Q" engine – our novel approach to CPU Kaspa mining. It's designed to synergize your CPU's power with strategic RAM utilization for potentially enhanced kHeavyHash performance.</p>
+             <div class="grid md:grid-cols-3 gap-6 mb-12">
+                 <div class="glass-card p-6 text-center">
+                     <div class="text-5xl text-green-400 mb-3">💡</div>
+                     <h4 class="font-semibold text-xl text-white mb-2">Intelligent Core Usage</h4>
+                     <p class="text-slate-400 text-sm">Automatically utilizes all available Intel CPU cores for parallel processing of Kaspa's kHeavyHash.</p>
                  </div>
-                  <div class="text-center p-6">
-                     <div class="text-4xl text-green-400 mb-2">💸</div>
-                     <h4 class="font-semibold text-lg text-gray-100">Low Transaction Fees</h4>
-                     <p class="text-gray-300 text-sm">Fees are fractions of a cent, making SKYSCOPE accessible for high-frequency use and micro-transactions.</p>
+                  <div class="glass-card p-6 text-center">
+                     <div class="text-5xl text-indigo-400 mb-3">💾</div>
+                     <h4 class="font-semibold text-xl text-white mb-2">RAM-Assisted Hashing</h4>
+                     <p class="text-slate-400 text-sm">User-selectable RAM allocation (25-80%) to conceptually pre-load data or assist hashing, aiming for higher throughput.</p>
                  </div>
-                  <div class="text-center p-6">
-                     <div class="text-4xl text-green-400 mb-2">🛡️</div>
-                     <h4 class="font-semibold text-lg text-gray-100">Robust Security</h4>
-                     <p class="text-gray-300 text-sm">While powerful, the system requires rigorous security practices to be "fail-proof" and protect assets.</p>
+                  <div class="glass-card p-6 text-center">
+                     <div class="text-5xl text-green-400 mb-3">🔗</div>
+                     <h4 class="font-semibold text-xl text-white mb-2">Seamless Kaspad Link</h4>
+                     <p class="text-slate-400 text-sm">Direct compatibility with your `kaspad` node for reliable work fetching and solution submission.</p>
                  </div>
              </div>
 
-             <div class="glass-card rounded-2xl p-8">
-                <h3 class="font-bold text-xl mb-6 text-center text-gray-100">Conceptual Token Creation Flow & Security Checklist</h3>
-                 <div class="grid md:grid-cols-2 gap-8">
+             <div class="glass-card p-8">
+                <h3 class="font-orbitron text-2xl font-bold mb-6 text-center text-white">How <span class="gradient-text">skyscope-hash-Q</span> Optimizes Your Mining</h3>
+                 <div class="grid md:grid-cols-2 gap-8 items-center">
                      <div>
-                        <p class="text-gray-300 mb-4">Creating an SPL token on Solana involves several key steps. Below is a simplified, conceptual flow. A production-ready token requires extensive development and auditing beyond this basic outline.</p>
-                        <ol class="relative border-l border-gray-600 ml-4">
-                            <li class="mb-10 ml-6">
-                                <span class="absolute flex items-center justify-center w-6 h-6 bg-green-500 rounded-full -left-3 ring-8 ring-gray-800">1</span>
-                                <h4 class="font-semibold text-gray-100">Setup & Key Generation</h4>
-                                <p class="text-sm text-gray-300">Install CLI tools and generate secure keypairs for ownership and mint authority.</p>
-                            </li>
-                            <li class="mb-10 ml-6">
-                                <span class="absolute flex items-center justify-center w-6 h-6 bg-green-500 rounded-full -left-3 ring-8 ring-gray-800">2</span>
-                                <h4 class="font-semibold text-gray-100">Create Token Mint</h4>
-                                <p class="text-sm text-gray-300">Deploy the core token account on-chain, defining parameters like decimals (e.g., 9).</p>
-                            </li>
-                             <li class="mb-10 ml-6">
-                                <span class="absolute flex items-center justify-center w-6 h-6 bg-green-500 rounded-full -left-3 ring-8 ring-gray-800">3</span>
-                                <h4 class="font-semibold text-gray-100">Mint & Distribute</h4>
-                                <p class="text-sm text-gray-300">Mint the initial supply and distribute tokens, including the creator's pool share.</p>
+                        <p class="text-slate-300 mb-4">The "skyscope-hash-Q" engine is more than just a hashing wrapper; it's a resource optimization framework designed for Kaspa's kHeavyHash on Intel CPUs:</p>
+                        <ol class="relative border-l-2 border-green-400 ml-4 space-y-6">
+                            <li class="ml-6">
+                                <span class="absolute flex items-center justify-center w-8 h-8 bg-green-500 rounded-full -left-4 ring-4 ring-slate-800 text-white font-bold">1</span>
+                                <h4 class="font-semibold text-lg text-white">Resource Analysis</h4>
+                                <p class="text-sm text-slate-400">Detects CPU cores and available RAM to tailor its strategy.</p>
                             </li>
                             <li class="ml-6">
-                                <span class="absolute flex items-center justify-center w-6 h-6 bg-green-500 rounded-full -left-3 ring-8 ring-gray-800">4</span>
-                                <h4 class="font-semibold text-gray-100">Secure & Finalize</h4>
-                                <p class="text-sm text-gray-300">Optionally revoke mint authority for a fixed supply and ensure all permissions are correct.</p>
+                                <span class="absolute flex items-center justify-center w-8 h-8 bg-green-500 rounded-full -left-4 ring-4 ring-slate-800 text-white font-bold">2</span>
+                                <h4 class="font-semibold text-lg text-white">Optimized Work Distribution</h4>
+                                <p class="text-sm text-slate-400">Distributes hashing tasks efficiently across CPU cores.</p>
+                            </li>
+                             <li class="ml-6">
+                                <span class="absolute flex items-center justify-center w-8 h-8 bg-green-500 rounded-full -left-4 ring-4 ring-slate-800 text-white font-bold">3</span>
+                                <h4 class="font-semibold text-lg text-white">RAM Utilization (Conceptual)</h4>
+                                <p class="text-sm text-slate-400">Allocates selected RAM percentage to potentially hold lookup tables, pre-computed data, or manage memory access patterns in a way that assists the CPU-bound kHeavyHash algorithm. This is the core of our R&D focus for performance enhancement.</p>
+                            </li>
+                            <li class="ml-6">
+                                <span class="absolute flex items-center justify-center w-8 h-8 bg-green-500 rounded-full -left-4 ring-4 ring-slate-800 text-white font-bold">4</span>
+                                <h4 class="font-semibold text-lg text-white">Real-time Feedback</h4>
+                                <p class="text-sm text-slate-400">Displays virtual SKYSCOPE (visualizing effort) and actual KAS mined, providing immediate insight into performance.</p>
                             </li>
                         </ol>
                      </div>
-                     <div>
-                        <p class="text-gray-300 mb-4">Security is non-negotiable. A "future-proof" token must adhere to the highest standards to prevent exploits and protect holders. This involves a multi-layered defense strategy.</p>
+                     <div class="mt-8 md:mt-0">
+                        <p class="text-slate-300 mb-4">The goal is a mining experience that feels more responsive and potentially more productive on standard Intel CPU setups, making Kaspa mining more accessible.</p>
                         <ul class="space-y-3">
-                            <li class="flex items-start">
-                                <span class="text-green-400 mr-3 mt-1">✓</span>
-                                <div><strong class="block text-gray-100">Independent Code Audits:</strong> Mandatory reviews by reputable third-party firms to identify vulnerabilities before deployment.</div>
+                            <li class="flex items-start p-3 bg-slate-700/30 rounded-lg">
+                                <span class="text-green-400 mr-3 mt-1 text-xl">✓</span>
+                                <div><strong class="block text-white">Built for Intel CPUs:</strong> Tailored for common hardware.</div>
                             </li>
-                            <li class="flex items-start">
-                                <span class="text-green-400 mr-3 mt-1">✓</span>
-                                <div><strong class="block text-gray-100">Extensive Testing:</strong> Rigorous unit, integration, and stress testing, including fuzz testing and attack simulations.</div>
+                            <li class="flex items-start p-3 bg-slate-700/30 rounded-lg">
+                                <span class="text-green-400 mr-3 mt-1 text-xl">✓</span>
+                                <div><strong class="block text-white">User-Controlled RAM:</strong> You decide how much RAM to allocate (25-80%).</div>
                             </li>
-                             <li class="flex items-start">
-                                <span class="text-green-400 mr-3 mt-1">✓</span>
-                                <div><strong class="block text-gray-100">Secure Coding Practices:</strong> Implementing proper access controls, avoiding hardcoded keys, and using safe math libraries to prevent overflows.</div>
-                            </li>
-                            <li class="flex items-start">
-                                <span class="text-green-400 mr-3 mt-1">✓</span>
-                                <div><strong class="block text-gray-100">Resilience Planning:</strong> Designing contracts to be resistant to flash loan attacks and other economic exploits.</div>
+                             <li class="flex items-start p-3 bg-slate-700/30 rounded-lg">
+                                <span class="text-green-400 mr-3 mt-1 text-xl">✓</span>
+                                <div><strong class="block text-white">Kaspad Compatible:</strong> Works with your existing Kaspa node.</div>
                             </li>
                         </ul>
                      </div>
@@ -246,308 +269,315 @@
              </div>
         </section>
 
-        <!-- Section 4: Growth Strategy -->
-        <section id="strategy" class="py-20">
-            <h2 class="text-3xl font-bold mb-2 text-gray-100">Pathways to Global Adoption</h2>
-            <p class="text-lg text-gray-300 mb-12 max-w-3xl">Achieving 90%+ global adoption requires a robust strategy for interoperability, market liquidity, and community engagement. The plan focuses on seamless cross-chain integration and building a loyal, active user base.</p>
+        <!-- Section 4: Effortless KAS Mining & Earning -->
+        <section id="effortless-earning" class="py-20">
+            <h2 class="text-4xl font-bold mb-4 text-center font-orbitron text-white">Effortless <span class="gradient-text">KAS Mining</span> & Earning</h2>
+            <p class="text-lg text-slate-300 mb-12 max-w-3xl mx-auto text-center">SKYSCOPE Miner simplifies Kaspa mining. Track your progress with our unique dual-token display (virtual SKYSCOPE & real KAS) and benefit from a clear 10% development fee that supports ongoing innovation.</p>
 
             <div class="grid md:grid-cols-2 gap-8 items-start">
-                 <!-- Interoperability -->
-                <div class="glass-card rounded-2xl p-6">
-                    <h3 class="font-bold text-xl mb-4 text-gray-100">Interoperability & Liquidity</h3>
-                    <p class="text-gray-300 mb-6">For SKYSCOPE to thrive, it must move freely across the Web3 ecosystem. The strategy involves integrating with cross-chain bridges, decentralized exchanges (DEXs), and lending platforms to maximize utility and ensure deep liquidity.</p>
-                     <div class="space-y-4">
-                        <details class="group">
-                            <summary class="flex justify-between items-center font-semibold cursor-pointer p-3 bg-gray-700/50 rounded-lg text-gray-100">
-                                <span>Cross-Chain Bridges</span>
-                                <span class="group-open:rotate-180 transition-transform">▼</span>
-                            </summary>
-                            <p class="text-sm text-gray-300 p-3">Integrate with protocols like Wormhole and Allbridge to enable SKYSCOPE transfers between Solana, Ethereum, BSC, and other major chains.</p>
-                        </details>
-                         <details class="group">
-                            <summary class="flex justify-between items-center font-semibold cursor-pointer p-3 bg-gray-700/50 rounded-lg text-gray-100">
-                                <span>DEX & Liquidity Pools</span>
-                                <span class="group-open:rotate-180 transition-transform">▼</span>
-                            </summary>
-                            <p class="text-sm text-gray-300 p-3">List on major DEXs like Raydium (Solana) and Uniswap (via bridge) to create deep, capital-efficient liquidity pools, reducing slippage for traders.</p>
-                        </details>
-                         <details class="group">
-                            <summary class="flex justify-between items-center font-semibold cursor-pointer p-3 bg-gray-700/50 rounded-lg text-gray-100">
-                                <span>Lending & Borrowing</span>
-                                <span class="group-open:rotate-180 transition-transform">▼</span>
-                            </summary>
-                            <p class="text-sm text-gray-300 p-3">Enable SKYSCOPE to be used as collateral on platforms like Solend and Aave, creating new use cases and driving demand.</p>
-                        </details>
-                    </div>
-                </div>
-
-                <!-- Community & Marketing -->
-                <div class="glass-card rounded-2xl p-6">
-                    <h3 class="font-bold text-xl mb-4 text-gray-100">Community & Marketing Excellence</h3>
-                    <p class="text-gray-300 mb-6">A strong, engaged community is the cornerstone of success. Growth will be driven by transparency, clear utility, and aligning incentives between the project and its holders through governance.</p>
-                     <ul class="space-y-3">
-                        <li class="flex items-center"><span class="text-green-400 mr-3">●</span><div class="text-gray-200"><strong>Transparency & Authenticity:</strong> Regular AMAs, development updates, and open communication.</div></li>
-                        <li class="flex items-center"><span class="text-green-400 mr-3">●</span><div class="text-gray-200"><strong>Clear Utility & Governance:</strong> Empowering holders with voting rights in a DAO to guide the project's future.</div></li>
-                        <li class="flex items-center"><span class="text-green-400 mr-3">●</span><div class="text-gray-200"><strong>Incentive Alignment:</strong> Using airdrops, bounties, and perform-to-earn quests to drive participation and viral growth.</div></li>
-                         <li class="flex items-center"><span class="text-green-400 mr-3">●</span><div class="text-gray-200"><strong>Strategic Partnerships:</strong> Collaborating with influencers and other projects to expand reach and build credibility.</div></li>
+                 <!-- Mining Display & Fee -->
+                <div class="glass-card p-8">
+                    <h3 class="font-orbitron text-2xl font-bold mb-4 text-white">Real-Time Mining Dashboard</h3>
+                    <p class="text-slate-300 mb-6">Our CLI provides a dynamic, real-time view of your mining success:</p>
+                    <ul class="space-y-3 text-slate-300 mb-6">
+                        <li class="flex items-center"><span class="text-green-400 mr-2">🔹</span>Virtual SKYSCOPE Mined: See a visual representation of your effort and efficiency.</li>
+                        <li class="flex items-center"><span class="text-indigo-400 mr-2">🔸</span>Actual KAS Mined: Track your real Kaspa earnings destined for your wallet.</li>
+                        <li class="flex items-center"><span class="text-slate-400 mr-2">▪️</span>Effective Hashrate, Accepted Shares, and Kaspad Connection Status.</li>
                     </ul>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section 5: Risks -->
-        <section id="risks" class="py-20 bg-gray-800/30 rounded-2xl">
-            <h2 class="text-3xl font-bold mb-2 text-gray-100">Critical Considerations & Risks</h2>
-            <p class="text-lg text-gray-300 mb-12 max-w-3xl">Transparency is paramount. This section directly addresses the significant challenges and regulatory hurdles identified in the project analysis, providing a clear-eyed view of the path ahead. Understanding these risks is crucial for a complete picture of the token's potential.</p>
-
-            <div class="grid md:grid-cols-2 gap-8">
-                <!-- Economic Realities -->
-                <div class="glass-card rounded-2xl p-6">
-                    <h3 class="font-bold text-xl mb-4 text-gray-100">Economic & Technical Realities</h3>
-                    <div class="space-y-6">
-                        <div>
-                            <h4 class="font-semibold text-lg text-gray-100">Novel Approach: Intrinsic Value by Design</h4>
-                            <p class="text-gray-300 mt-1">SKYSCOPE is engineered with a groundbreaking approach where its value is intrinsically derived from its multi-asset peg (USDT, BTC, XRP, SOL) from inception. This is not reliant on traditional pre-funding but on the transparent, AI-orchestrated reflection of the combined worth of these established digital assets.</p>
-                        </div>
-                         <div>
-                            <h4 class="font-semibold text-lg text-green-400">Mechanism: AI-Powered Peg & Value Accrual</h4>
-                            <p class="text-gray-300 mt-1">The core of SKYSCOPE's value proposition lies in its AI-driven system that continuously ensures the token's backing by the weighted average of the pegged assets. This mechanism is designed for inherent stability and value representation, with staking yields generated from the productive use of these underlying asset values within the DeFi ecosystem, rather than pure inflation.</p>
-                        </div>
+                    <div class="p-4 bg-slate-700/30 rounded-lg">
+                        <h4 class="font-semibold text-white">Transparent 10% Dev Fee</h4>
+                        <p class="text-sm text-slate-400">A 10% fee on mined KAS is directed to `kaspa:qqggvdrxjqdgwql4aac8hg0pq2v4z5p46l86f98hq7ax29k7x55v7sycs9kvm` to fund continuous development, support, and improvements for SKYSCOPE Miner.</p>
                     </div>
                 </div>
-                <!-- Decentralized Operation -->
-                <div class="glass-card rounded-2xl p-6">
-                    <h3 class="font-bold text-xl mb-4 text-gray-100">A True Global Decentralized Cryptocurrency</h3>
-                    <p class="text-gray-300 mb-4">SKYSCOPE is conceived as a borderless, decentralized digital asset, operating independently of any single nation-state's jurisdiction. Its governance and evolution are intended to be community-driven, fostering a transparent and resilient global ecosystem.</p>
-                     <ul class="space-y-4">
-                        <li class="flex items-start">
-                             <div class="w-12 h-12 rounded-lg bg-green-500 text-white flex items-center justify-center font-bold text-lg mr-4 flex-shrink-0">🌐</div>
-                             <div>
-                                <strong class="block text-gray-100">Permissionless & Borderless</strong>
-                                <p class="text-sm text-gray-300">Designed for global accessibility, SKYSCOPE aims to empower users worldwide without centralized choke-points, embodying the true spirit of cryptocurrency.</p>
-                             </div>
-                        </li>
-                         <li class="flex items-start">
-                             <div class="w-12 h-12 rounded-lg bg-green-500 text-white flex items-center justify-center font-bold text-lg mr-4 flex-shrink-0">🛡️</div>
-                             <div>
-                                <strong class="block text-gray-100">Commitment to Security & Transparency</strong>
-                                <p class="text-sm text-gray-300">The project prioritizes rigorous security audits, open-source principles, and transparent on-chain governance to build unwavering trust and ensure the long-term integrity of the protocol.</p>
-                             </div>
-                        </li>
-                     </ul>
+
+                <!-- Owner Allocation -->
+                <div class="glass-card p-8">
+                    <h3 class="font-orbitron text-2xl font-bold mb-4 text-white">Owner's Allocation: Supporting the Vision</h3>
+                    <p class="text-slate-300 mb-6">To support the foundational vision of Miss Casey Jay Topojani, SKYSCOPE Miner is programmed to allocate the first 50,000 USD equivalent of mined Kaspa (KAS), after the developer fee, to the owner's specified wallet. This contribution, generated over time through the miner's successful operation by the community, helps ensure the project's long-term development and strategic initiatives.</p>
+                    <div class="flex flex-col items-center justify-center h-40 bg-slate-700/30 rounded-lg p-4">
+                        <span class="text-5xl text-green-400">🏆</span>
+                        <p class="font-semibold text-lg mt-2 text-white">Dedicated KAS Accumulation</p>
+                        <p class="text-sm text-slate-400">Fueling project growth and innovation.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="earning-paths" class="mt-12"> <!-- Renamed from staking-tabs container -->
+                 <h3 class="font-orbitron text-2xl font-bold mb-6 text-center text-white">Optimize Your <span class="gradient-text">Mining Strategy</span></h3>
+                 <div id="mining-optimization-tabs" class="flex flex-wrap justify-center gap-3 mb-6"> <!-- Renamed ID -->
+                    <button data-tab="native" class="tab active">Standard CPU Mining</button>
+                    <button data-tab="liquid" class="tab">RAM-Boosted Mining</button> <!-- Re-purposed tab -->
+                    <button data-tab="yield" class="tab">Virtual SKYSCOPE Metrics</button> <!-- Re-purposed tab -->
+                </div>
+                <div id="mining-optimization-content" class="max-w-2xl mx-auto"> <!-- Renamed ID -->
+                    <!-- Content will be injected by JS -->
                 </div>
             </div>
         </section>
 
-        <!-- Section 6: Blueprint -->
-        <section id="blueprint" class="py-20">
-            <h2 class="text-3xl font-bold mb-2 text-center text-gray-100">The Blueprint for SKYSCOPE's Ascent</h2>
-            <p class="text-lg text-gray-300 mb-12 max-w-3xl mx-auto text-center">This roadmap outlines the key strategic pillars for realizing SKYSCOPE's vision as a revolutionary, globally adopted, and intrinsically valuable decentralized asset.</p>
+        <!-- Section 5: Miner Setup (Previously Global Reach) -->
+        <section id="global-reach" class="py-20 bg-slate-800/30">
+            <h2 class="text-4xl font-bold mb-4 text-center font-orbitron text-white">Get Started: <span class="gradient-text">Easy Miner Setup</span></h2>
+            <p class="text-lg text-slate-300 mb-12 max-w-3xl mx-auto text-center">SKYSCOPE Miner is designed for straightforward setup and use with your `kaspad` node, enabling you to contribute to the Kaspa network and earn KAS from anywhere.</p>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="glass-card p-6 text-center">
+                    <div class="text-5xl text-green-400 mb-3">1️⃣</div>
+                    <h3 class="font-semibold text-xl mb-2 text-white">Download SKYSCOPE Miner</h3>
+                    <p class="text-slate-400 text-sm">Get the latest Python application package (Coming Soon!).</p>
+                </div>
+                <div class="glass-card p-6 text-center">
+                     <div class="text-5xl text-indigo-400 mb-3">2️⃣</div>
+                    <h3 class="font-semibold text-xl mb-2 text-white">Configure Your Kaspad</h3>
+                    <p class="text-slate-400 text-sm">Ensure your `kaspad` node is running, synced, and accessible by the miner.</p>
+                </div>
+                <div class="glass-card p-6 text-center">
+                    <div class="text-5xl text-green-400 mb-3">3️⃣</div>
+                    <h3 class="font-semibold text-xl mb-2 text-white">Run & Earn KAS!</h3>
+                    <p class="text-slate-400 text-sm">Launch SKYSCOPE Miner with your Kaspa address and desired settings, and start earning!</p>
+                </div>
+            </div>
+            <p class="text-center mt-10 text-slate-400">Detailed setup instructions will be available in the `SKYSCOPE_Miner_Manual.md`.</p>
+        </section>
+
+        <!-- Section 6: Miner Benefits (Previously Unrivaled Profit) -->
+        <section id="profit" class="py-20">
+            <h2 class="text-4xl font-bold mb-4 text-center font-orbitron text-white">SKYSCOPE Miner: <span class="gradient-text">Key Benefits</span></h2>
+            <p class="text-lg text-slate-300 mb-12 max-w-3xl mx-auto text-center">Experience the advantages of mining Kaspa with a tool built for CPU efficiency and user empowerment.</p>
             <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="p-6 border border-gray-700/80 rounded-xl hover:bg-gray-700/50 transition-colors">
-                    <h4 class="font-semibold text-lg mb-2 text-gray-100">1. Perfect the Intrinsic Multi-Asset Peg</h4>
-                    <p class="text-sm text-gray-300">Continuously refine and transparently manage the AI-driven multi-asset peg mechanism, ensuring SKYSCOPE accurately reflects the combined value of its underlying assets (USDT, BTC, XRP, SOL) and builds market confidence in its inherent worth.</p>
+                <div class="glass-card p-6 hover:shadow-green-400/30 hover:border-green-400/50 transition-all duration-300">
+                    <h4 class="font-semibold text-xl mb-2 text-white">Optimized for Intel CPUs</h4>
+                    <p class="text-sm text-slate-400">Specifically targets Intel CPU architecture, aiming for enhanced kHeavyHash performance.</p>
                 </div>
-                <div class="p-6 border border-gray-700/80 rounded-xl hover:bg-gray-700/50 transition-colors">
-                    <h4 class="font-semibold text-lg mb-2 text-gray-100">2. Implement Fortified Security & Audits</h4>
-                    <p class="text-sm text-gray-300">Adhere to exhaustive security protocols, including multiple independent audits for all smart contracts and ongoing threat modeling, to create a "fail-proof" and "future-proof" ecosystem.</p>
+                <div class="glass-card p-6 hover:shadow-indigo-400/30 hover:border-indigo-400/50 transition-all duration-300">
+                    <h4 class="font-semibold text-xl mb-2 text-white">Conceptual RAM Boost ("skyscope-hash-Q")</h4>
+                    <p class="text-sm text-slate-400">Innovatively designed to utilize system RAM (25-80% user-selectable) to potentially improve hashing efficiency.</p>
                 </div>
-                <div class="p-6 border border-gray-700/80 rounded-xl hover:bg-gray-700/50 transition-colors">
-                    <h4 class="font-semibold text-lg mb-2 text-gray-100">3. Engineer Seamless Global Interoperability</h4>
-                    <p class="text-sm text-gray-300">Develop and integrate cutting-edge cross-chain solutions and foster deep liquidity on global DEXs to ensure SKYSCOPE is effortlessly tradable and usable across diverse blockchain environments.</p>
+                <div class="glass-card p-6 hover:shadow-green-400/30 hover:border-green-400/50 transition-all duration-300">
+                    <h4 class="font-semibold text-xl mb-2 text-white">User-Friendly CLI</h4>
+                    <p class="text-sm text-slate-400">Easy to configure and run, with clear real-time statistics and intuitive controls.</p>
                 </div>
-                <div class="p-6 border border-gray-700/80 rounded-xl hover:bg-gray-700/50 transition-colors">
-                    <h4 class="font-semibold text-lg mb-2 text-gray-100">4. Drive Explosive Community-Led Growth via DAO</h4>
-                    <p class="text-sm text-gray-300">Empower a global, vibrant community through a fully decentralized autonomous organization (DAO), incentivizing participation, innovation, and evangelism to achieve widespread adoption.</p>
+                <div class="glass-card p-6 hover:shadow-indigo-400/30 hover:border-indigo-400/50 transition-all duration-300">
+                    <h4 class="font-semibold text-xl mb-2 text-white">Direct Kaspad Compatibility</h4>
+                    <p class="text-sm text-slate-400">Seamlessly integrates with your Kaspa full node (`kaspad`) for reliable operation.</p>
                 </div>
-                 <div class="p-6 border border-gray-700/80 rounded-xl hover:bg-gray-700/50 transition-colors">
-                    <h4 class="font-semibold text-lg mb-2 text-gray-100">5. Uphold True Decentralization & Openness</h4>
-                    <p class="text-sm text-gray-300">Maintain an unwavering commitment to open-source development, transparent governance, and permissionless access, ensuring SKYSCOPE remains a true utility for the global populace, free from singular control.</p>
+                 <div class="glass-card p-6 hover:shadow-green-400/30 hover:border-green-400/50 transition-all duration-300">
+                    <h4 class="font-semibold text-xl mb-2 text-white">Transparent Dev Fee</h4>
+                    <p class="text-sm text-slate-400">A straightforward 10% fee on mined KAS supports ongoing project development and improvements.</p>
                 </div>
-                 <div class="p-6 border border-gray-700/80 rounded-xl hover:bg-gray-700/50 transition-colors">
-                    <h4 class="font-semibold text-lg mb-2 text-gray-100">6. Pioneer Accessible CPU-Based PoW Mining</h4>
-                    <p class="text-sm text-gray-300">Lead research and development into a novel, highly accessible, and equitable CPU-friendly Proof-of-Work algorithm, further decentralizing token distribution and network participation, making mining significantly more accessible than current specialized hardware-dominated chains.</p>
+                 <div class="glass-card p-6 hover:shadow-indigo-400/30 hover:border-indigo-400/50 transition-all duration-300">
+                    <h4 class="font-semibold text-xl mb-2 text-white">Accessible Kaspa Mining</h4>
+                    <p class="text-sm text-slate-400">Aims to lower the barrier to entry for Kaspa mining, promoting broader network participation.</p>
                 </div>
             </div>
         </section>
 
-        <!-- Section 7: Creator -->
-        <footer id="creator" class="py-10 border-t border-gray-700/50 text-center">
-            <h3 class="font-bold text-xl mb-2 text-gray-100">Project Vision by</h3>
-            <p class="text-lg font-semibold text-green-400">Miss Casey Jay Topojani</p>
-            <p class="text-gray-300">Skyscope Sentinel Intelligence</p>
-            <div class="mt-4 text-sm text-gray-400 space-x-4">
-                <span>ABN: 11287984779</span>
-                <span class="text-gray-500">|</span>
-                <span>skyscopesentinel@gmail.com</span>
-                <span class="text-gray-500">|</span>
-                <span>Github: skyscope-sentinel</span>
+        <!-- Section 7: Core Features (Previously The Blueprint) -->
+        <section id="blueprint" class="py-20 bg-slate-800/30">
+            <h2 class="text-4xl font-bold mb-4 text-center font-orbitron text-white">Core <span class="gradient-text">Miner Features</span></h2>
+            <p class="text-lg text-slate-300 mb-12 max-w-3xl mx-auto text-center">SKYSCOPE Miner is packed with features designed for an optimal CPU mining experience for Kaspa.</p>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="p-6 glass-card">
+                    <h4 class="font-semibold text-xl mb-2 text-white"><span class="text-green-400 mr-2">1.</span>Multi-Core CPU Utilization</h4>
+                    <p class="text-sm text-slate-400">Automatically detects and utilizes all available CPU cores on Intel systems for maximum hashing power.</p>
+                </div>
+                <div class="p-6 glass-card">
+                    <h4 class="font-semibold text-xl mb-2 text-white"><span class="text-indigo-400 mr-2">2.</span>Configurable RAM Usage</h4>
+                    <p class="text-sm text-slate-400">User options to allocate 25%, 50%, 75%, or 80% of system RAM for the "skyscope-hash-Q" conceptual boost.</p>
+                </div>
+                <div class="p-6 glass-card">
+                    <h4 class="font-semibold text-xl mb-2 text-white"><span class="text-green-400 mr-2">3.</span>Dual Real-time Display</h4>
+                    <p class="text-sm text-slate-400">Track actual KAS mined and a virtual SKYSCOPE representation of mining progress and efficiency via CLI.</p>
+                </div>
+                <div class="p-6 glass-card">
+                    <h4 class="font-semibold text-xl mb-2 text-white"><span class="text-indigo-400 mr-2">4.</span>Kaspad Node Compatibility</h4>
+                    <p class="text-sm text-slate-400">Connects reliably to your `kaspad` node for receiving block templates and submitting solutions.</p>
+                </div>
+                 <div class="p-6 glass-card">
+                    <h4 class="font-semibold text-xl mb-2 text-white"><span class="text-green-400 mr-2">5.</span>Robust Error Handling</h4>
+                    <p class="text-sm text-slate-400">Includes retry mechanisms for block submission to prevent loss of earned KAS due to transient network issues.</p>
+                </div>
+                 <div class="p-6 glass-card">
+                    <h4 class="font-semibold text-xl mb-2 text-white"><span class="text-indigo-400 mr-2">6.</span>Automated Fee & Allocation</h4>
+                    <p class="text-sm text-slate-400">Transparent 10% dev fee and programmed accumulation logic for the owner's KAS allocation target.</p>
+                </div>
             </div>
+        </section>
+
+        <!-- Section 8: About Us -->
+        <footer id="creator" class="py-16 border-t-2 border-slate-700 text-center bg-[#131313]">
+            <h3 class="font-orbitron text-3xl font-bold mb-3 text-white">The Visionary Behind <span class="gradient-text">SKYSCOPE</span></h3>
+            <p class="text-xl font-semibold text-green-400">Miss Casey Jay Topojani</p>
+            <p class="text-slate-300">Skyscope Sentinel Intelligence</p>
+            <div class="mt-6 text-md text-slate-400 space-x-2 md:space-x-4">
+                <span>ABN: 11287984779</span>
+                <span class="text-slate-500">|</span>
+                <a href="mailto:skyscopesentinel@gmail.com" class="hover:text-indigo-400">skyscopesentinel@gmail.com</a>
+                <span class="text-slate-500 hidden md:inline">|</span>
+                <a href="https://github.com/skyscope-sentinel" target="_blank" rel="noopener noreferrer" class="hover:text-indigo-400 block mt-2 md:mt-0 md:inline">Github: skyscope-sentinel</a>
+            </div>
+            <p class="mt-8 text-xs text-slate-500">&copy; 2024 SKYSCOPE Project. All conceptual rights reserved for SKYSCOPE Miner and skyscope-hash-Q technology.</p>
         </footer>
 
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        function initializeChartAndContent() {
-            const stakingData = {
+        document.addEventListener('DOMContentLoaded', function() {
+            const miningOptimizationData = {
                 native: {
-                    title: 'Native Staking',
-                    apy: '5-15% APR',
-                    source: 'Network fees, controlled inflation',
-                    sustainability: 'Relies on transaction fee revenue and long-term utility demand for SKYSCOPE.',
-                    considerations: 'Involves lock-up periods and potential slashing penalties if a validator misbehaves.'
+                    title: 'Standard CPU Mining',
+                    apy: 'Baseline KAS Yield', // Rephrased from APY
+                    description: 'Utilize SKYSCOPE Miner with standard CPU core allocation for reliable Kaspa mining. Ideal for consistent performance.',
+                    benefits: 'Easy setup, accessible to all Intel CPU users, earn KAS directly by contributing to network security.',
+                    risk: 'Standard Proof-of-Work mining yield variability. Network difficulty and KAS price fluctuations affect rewards.',
                 },
                 liquid: {
-                    title: 'Liquid Staking',
-                    apy: '10-20% APY',
-                    source: 'Native staking rewards + DeFi yield',
-                    sustainability: 'High capital efficiency as Liquid Staking Tokens (LSTs) can be used elsewhere in DeFi.',
-                    considerations: 'Adds smart contract risk from the liquid staking protocol and potential depeg of the LST.'
+                    title: 'RAM-Boosted Mining (skyscope-hash-Q)',
+                    apy: 'Conceptual KAS Yield Enhancement', // Rephrased
+                    description: 'Allocate a percentage of your system RAM (25-80%) via SKYSCOPE Miner. Our "skyscope-hash-Q" approach conceptually uses this RAM to assist CPU hashing operations for Kaspa, aiming for improved efficiency.',
+                    benefits: 'Aims for higher effective hashrate on existing Intel CPU hardware. User-configurable RAM usage allows tailoring to system capabilities.',
+                    risk: 'Performance gains from RAM utilization are conceptual and subject to ongoing R&D and real-world testing with the kHeavyHash algorithm. Ensure system stability when allocating significant RAM.',
                 },
                 yield: {
-                    title: 'Yield Farming',
-                    apy: '10-25% APY',
-                    source: 'Trading fees, LP rewards',
-                    sustainability: 'Dependent on high trading volume. High APYs are often temporary and carry higher risk.',
-                    considerations: 'Risk of impermanent loss and smart contract vulnerabilities of the DEX/LP.'
+                    title: 'SKYSCOPE Virtual Metrics (Display)',
+                    apy: 'Visual Efficiency Indicator', // Rephrased
+                    description: 'The virtual SKYSCOPE token display offers a unique, real-time visualization of your KAS mining progress and relative efficiency as interpreted by the skyscope-hash-Q engine.',
+                    benefits: 'Engaging real-time feedback on mining activity and resource utilization. Complements actual KAS earnings display for a richer user experience.',
+                    risk: 'Virtual SKYSCOPE is a visual display metric within the miner, not a separate tradable cryptocurrency asset in this context.',
                 }
             };
 
-            const stakingTabsContainer = document.getElementById('staking-tabs');
-            const stakingContentContainer = document.getElementById('staking-content');
+            const optimizationTabsContainer = document.getElementById('mining-optimization-tabs');
+            const optimizationContentContainer = document.getElementById('mining-optimization-content');
 
-            function updateStakingContent(tabName) {
-                const data = stakingData[tabName];
-                stakingContentContainer.innerHTML = `
-                    <div class="bg-gray-700/50 p-4 rounded-lg">
-                        <h4 class="font-semibold text-lg text-gray-100">${data.title} <span class="text-sm font-normal text-green-400">${data.apy}</span></h4>
-                        <p class="text-sm mt-2 text-gray-300"><strong class="text-gray-200">Value Source:</strong> ${data.source}</p>
-                        <p class="text-sm mt-2 text-gray-300"><strong class="text-gray-200">Sustainability:</strong> ${data.sustainability}</p>
-                        <p class="text-sm mt-2 text-gray-300"><strong class="text-gray-200">Key Considerations:</strong> ${data.considerations}</p>
+            function updateOptimizationContent(tabName) {
+                if (!miningOptimizationData[tabName] || !optimizationContentContainer) return;
+                const data = miningOptimizationData[tabName];
+                optimizationContentContainer.innerHTML = `
+                    <div class="bg-slate-700/30 p-6 rounded-xl shadow-lg">
+                        <h4 class="font-semibold text-xl text-white">${data.title} <span class="text-sm font-normal text-green-400">${data.apy}</span></h4>
+                        <p class="text-sm mt-3 text-slate-300"><strong class="text-slate-100">Concept:</strong> ${data.description}</p>
+                        <p class="text-sm mt-3 text-slate-300"><strong class="text-slate-100">Potential Benefits:</strong> ${data.benefits}</p>
+                        <p class="text-sm mt-3 text-slate-300"><strong class="text-slate-100">Important Notes:</strong> ${data.risk}</p>
                     </div>
                 `;
-                document.querySelectorAll('#staking-tabs .tab').forEach(t => t.classList.remove('active'));
-                document.querySelector(`#staking-tabs .tab[data-tab="${tabName}"]`).classList.add('active');
+                if (optimizationTabsContainer) {
+                    optimizationTabsContainer.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    const activeTab = optimizationTabsContainer.querySelector(`.tab[data-tab="${tabName}"]`);
+                    if (activeTab) activeTab.classList.add('active');
+                }
             }
 
-            if (stakingTabsContainer) {
-                stakingTabsContainer.addEventListener('click', (e) => {
+            if (optimizationTabsContainer) {
+                optimizationTabsContainer.addEventListener('click', (e) => {
                     if (e.target.matches('.tab')) {
                         const tabName = e.target.dataset.tab;
-                        updateStakingContent(tabName);
+                        updateOptimizationContent(tabName);
                     }
                 });
-                // Initial content if container exists
-                updateStakingContent('native');
+                const firstTab = optimizationTabsContainer.querySelector('.tab');
+                if (firstTab) {
+                    updateOptimizationContent(firstTab.dataset.tab || 'native');
+                }
+            } else if (optimizationContentContainer) {
+                updateOptimizationContent('native');
             }
 
-            const ctx = document.getElementById('stakingChart');
-            if (ctx) {
-                const stakingChart = new Chart(ctx.getContext('2d'), {
-                    type: 'bar',
-                    data: {
-                        labels: ['Native Staking', 'Liquid Staking', 'Yield Farming (LP)'],
-                        datasets: [{
-                            label: 'Illustrative APY Range (%)',
-                            data: [[5, 15], [10, 20], [10, 25]],
-                            backgroundColor: [
-                                'rgba(104, 211, 145, 0.6)', // Brighter green-400
-                                'rgba(104, 211, 145, 0.8)',
-                                'rgba(104, 211, 145, 1.0)',
-                            ],
-                            borderColor: [
-                                'rgb(104, 211, 145)',
-                                'rgb(104, 211, 145)',
-                                'rgb(104, 211, 145)',
-                            ],
-                            borderWidth: 1,
-                            borderRadius: 5,
-                            borderSkipped: false,
-                        }]
-                    },
-                    options: {
-                        indexAxis: 'y',
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            x: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Annual Percentage Yield (APY %)',
-                                    color: '#e2e8f0' // Light text
-                                },
-                                ticks: { color: '#a0aec0' }, // Light text for ticks
-                                grid: { color: 'rgba(74, 85, 104, 0.5)' } // Darker grid lines
-                            },
-                            y: {
-                                grid: { display: false },
-                                ticks: { color: '#a0aec0' } // Light text for ticks
-                            }
+            const chartCtx = document.getElementById('stakingChart'); // ID from template, consider renaming if chart changes context
+            if (chartCtx) {
+                let existingChart = Chart.getChart(chartCtx);
+                if (existingChart) {
+                    existingChart.destroy();
+                }
+                try {
+                    new Chart(chartCtx.getContext('2d'), {
+                        type: 'bar',
+                        data: {
+                            labels: ['Standard CPU', 'CPU + 25% RAM', 'CPU + 50% RAM', 'CPU + 80% RAM'],
+                            datasets: [{
+                                label: 'Conceptual KAS Hashrate Boost (Illustrative)',
+                                data: [100, 115, 135, 160], // Adjusted example data for more modest conceptual boost
+                                backgroundColor: [
+                                    'rgba(74, 222, 128, 0.6)', // green-400
+                                    'rgba(96, 165, 250, 0.6)', // blue-400
+                                    'rgba(167, 139, 250, 0.6)', // violet-400
+                                    'rgba(250, 204, 21, 0.6)',  // yellow-400
+                                ],
+                                borderColor: [
+                                    '#4ADE80',
+                                    '#60A5FA',
+                                    '#A78BFA',
+                                    '#FACC15',
+                                ],
+                                borderWidth: 1,
+                                borderRadius: {topLeft: 8, topRight: 8, bottomLeft: 0, bottomRight: 0}, // Rounded top corners
+                            }]
                         },
-                        plugins: {
-                            legend: {
-                                display: false,
-                                labels: { color: '#e2e8f0' } // Light text
+                        options: {
+                            indexAxis: 'x',
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    title: { display: true, text: 'Relative Hashrate Units (Illustrative)', color: '#E0E0E0', font: {size: 14} },
+                                    ticks: { color: '#A3A3A3', font: {size: 12} },
+                                    grid: { color: 'rgba(100, 116, 139, 0.2)'}
+                                },
+                                x: {
+                                    title: { display: true, text: 'SKYSCOPE Miner RAM Configuration', color: '#E0E0E0', font: {size: 14} },
+                                    ticks: { color: '#A3A3A3', font: {size: 12} },
+                                    grid: { display: false }
+                                }
                             },
-                            tooltip: {
-                                titleColor: '#e2e8f0', // Light text
-                                bodyColor: '#e2e8f0', // Light text
-                                backgroundColor: 'rgba(30,41,59,0.9)', // Dark tooltip background
-                                callbacks: {
-                                    label: function(context) {
-                                        const val = context.raw;
-                                        return `${context.dataset.label}: ${val[0]}% - ${val[1]}%`;
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    titleColor: '#FFFFFF', bodyColor: '#FFFFFF', backgroundColor: 'rgba(30,41,59,0.95)',
+                                    borderColor: '#4ADE80', borderWidth: 1, padding: 10, cornerRadius: 8,
+                                    callbacks: {
+                                        label: function(context) {
+                                            return `Conceptual Relative Hashrate: ${context.raw}`;
+                                        }
                                     }
                                 }
                             }
                         }
+                    });
+                } catch (e) {
+                    console.error("Error initializing chart:", e);
+                    if (chartCtx.parentNode) {
+                        const fallbackMsg = document.createElement('p');
+                        fallbackMsg.textContent = 'Chart data is currently unavailable. Illustrative performance metrics will be shown here.';
+                        fallbackMsg.className = 'text-slate-400 text-center py-8';
+                        chartCtx.parentNode.replaceChild(fallbackMsg, chartCtx);
                     }
-                });
+                }
             }
 
             const sections = document.querySelectorAll('section, footer');
-            const navLinks = document.querySelectorAll('.nav-link');
+            const navLinks = document.querySelectorAll('#desktop-nav .nav-link');
 
             window.addEventListener('scroll', () => {
-                let current = '';
+                let current = 'hero'; // Default to hero
                 sections.forEach(section => {
                     const sectionTop = section.offsetTop;
-                    if (pageYOffset >= sectionTop - 100) {
+                    if (pageYOffset >= sectionTop - (window.innerHeight / 3) ) {
                         current = section.getAttribute('id');
                     }
                 });
 
                 navLinks.forEach(link => {
                     link.classList.remove('active');
-                    if (link.getAttribute('href').includes(current)) {
+                    const href = link.getAttribute('href');
+                    if (href === `#${current}`) {
                         link.classList.add('active');
                     }
                 });
             });
-        }
-
-        const chartJsScript = document.querySelector('script[src*="chart.js"]');
-        if (chartJsScript) {
-            chartJsScript.onload = initializeChartAndContent;
-            chartJsScript.onerror = () => console.error("Failed to load Chart.js script.");
-        } else {
-            // Fallback if Chart.js script is somehow not found or if running in an environment without it.
-            // This ensures the rest of the page logic can run.
-            document.addEventListener('DOMContentLoaded', () => {
-                 // Call a version of initializeChartAndContent that doesn't rely on Chart.js
-                 // or only parts of it if Chart.js is not critical for other interactions.
-                 // For this specific script, Chart.js is a major part.
-                 // If we only want the non-chart parts to run:
-                 if (typeof Chart === 'undefined') {
-                    console.warn("Chart.js not loaded. Chart will not be displayed. Initializing other page elements.");
-                    // Call a modified version of initializeChartAndContent or specific functions
-                    // that do not depend on Chart.js
-                    // e.g. initializeNonChartContent();
-                 }
-            });
-        }
+             window.dispatchEvent(new Event('scroll')); // Trigger scroll on load to set initial active link
+        });
     </script>
 </body>
 </html>
