@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKYSCOPESENTINEL (SKYSCOPE) - Interactive Blueprint</title>
+    <!-- Chosen Palette: Calm Harmony Neutrals -->
+    <!-- Application Structure Plan: A thematic, single-page application with a fixed side navigation. The structure guides the user from the high-level vision (Hero, The Vision), through the underlying mechanics (Technology, Growth Strategy), and concludes with crucial realities (Critical Considerations, Blueprint). This narrative flow is more engaging than the report's formal structure, using interactive diagrams and cards to simplify complex topics like the multi-asset peg, staking mechanisms, and regulatory hurdles, making the information accessible and digestible for a broader audience. -->
+    <!-- Visualization & Content Choices: The report's key tables and complex concepts are transformed into interactive components. The Multi-Asset Peg is a CSS diagram (Inform/Organize). The Staking Mechanisms table is now a set of interactive cards with a Chart.js bar chart for APY comparison (Compare/Inform). The Interoperability table is a visual network diagram (Show Relationships). Critical risks like collateralization and regulation are presented in clear, scannable formats like a 'Challenge/Solution' component and a step-by-step diagram (Inform/Organize). This prioritizes user engagement and understanding over static data presentation. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF6;
+            color: #3C3633;
+        }
+        .nav-link {
+            transition: all 0.3s ease;
+            transform-origin: left;
+        }
+        .nav-link.active {
+            color: #739072;
+            transform: scale(1.05);
+            font-weight: 600;
+        }
+        .nav-link:hover {
+            color: #E0A75E;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .tab.active {
+            background-color: #739072;
+            color: #FDFBF6;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 40vh;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+<body class="flex">
+
+    <!-- Sidebar Navigation -->
+    <nav class="hidden lg:block w-64 h-screen fixed top-0 left-0 bg-[#E0A75E]/10 p-8 border-r border-gray-200/50">
+        <h2 class="text-xl font-bold text-[#3C3633] mb-2">SKYSCOPE</h2>
+        <p class="text-sm text-gray-500 mb-8">Interactive Blueprint</p>
+        <ul id="desktop-nav" class="space-y-4">
+            <li><a href="#hero" class="nav-link block text-gray-600 font-medium">Introduction</a></li>
+            <li><a href="#vision" class="nav-link block text-gray-600 font-medium">The Vision</a></li>
+            <li><a href="#technology" class="nav-link block text-gray-600 font-medium">Technology Stack</a></li>
+            <li><a href="#strategy" class="nav-link block text-gray-600 font-medium">Growth Strategy</a></li>
+            <li><a href="#risks" class="nav-link block text-gray-600 font-medium">Critical Considerations</a></li>
+            <li><a href="#blueprint" class="nav-link block text-gray-600 font-medium">The Blueprint</a></li>
+            <li><a href="#creator" class="nav-link block text-gray-600 font-medium">About the Creator</a></li>
+        </ul>
+    </nav>
+
+    <!-- Mobile Navigation -->
+     <div class="lg:hidden fixed bottom-0 left-0 w-full bg-white/80 backdrop-blur-sm border-t border-gray-200 z-50">
+        <div class="flex justify-around p-2">
+            <a href="#hero" class="text-gray-600 hover:text-[#739072] p-2 text-xs">Home</a>
+            <a href="#vision" class="text-gray-600 hover:text-[#739072] p-2 text-xs">Vision</a>
+            <a href="#technology" class="text-gray-600 hover:text-[#739072] p-2 text-xs">Tech</a>
+            <a href="#strategy" class="text-gray-600 hover:text-[#739072] p-2 text-xs">Strategy</a>
+            <a href="#risks" class="text-gray-600 hover:text-[#739072] p-2 text-xs">Risks</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="w-full lg:ml-64 p-4 md:p-8 lg:p-12">
+
+        <!-- Section 1: Hero -->
+        <section id="hero" class="min-h-screen flex flex-col justify-center items-start text-left">
+            <div class="max-w-4xl">
+                <span class="text-sm font-semibold uppercase text-[#E0A75E] tracking-wider">SKYSCOPESENTINEL (SKYSCOPE)</span>
+                <h1 class="text-4xl md:text-6xl font-bold text-[#3C3633] mt-2 mb-4 leading-tight">An AI-Driven, Multi-Asset Pegged Cryptocurrency on Solana.</h1>
+                <p class="text-lg md:text-xl text-gray-600 max-w-3xl">
+                    This interactive blueprint explores SKYSCOPE, a novel token designed to redefine digital asset value. It delves into its foundational design, technical implementation, strategic pathways for adoption, and the critical regulatory landscape, translating a comprehensive analysis into an explorable experience.
+                </p>
+            </div>
+        </section>
+
+        <!-- Section 2: The Vision -->
+        <section id="vision" class="py-20">
+            <h2 class="text-3xl font-bold mb-2">The Foundational Vision</h2>
+            <p class="text-lg text-gray-600 mb-12 max-w-3xl">This section breaks down the core economic model of SKYSCOPE. We'll explore its unique AI-driven pegging mechanism that tracks a basket of assets and the innovative staking layers designed to generate intrinsic value growth for holders.</p>
+
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <!-- AI-Powered Peg Diagram -->
+                <div class="glass-card rounded-2xl p-6">
+                    <h3 class="font-bold text-xl mb-4 text-[#3C3633]">The AI-Powered Multi-Asset Peg</h3>
+                    <p class="text-gray-700 mb-6">SKYSCOPE is a synthetic asset designed to mirror the combined value of a basket of leading digital currencies. An advanced AI model orchestrates this peg, dynamically rebalancing to maintain stability and reflect true market value.</p>
+                    <div class="relative w-full h-80 flex items-center justify-center p-4">
+                        <!-- Center Token -->
+                        <div class="absolute z-10 flex flex-col items-center">
+                            <div class="w-24 h-24 bg-[#739072] rounded-full flex items-center justify-center shadow-lg">
+                                <span class="text-white font-bold text-lg">SKYSCOPE</span>
+                            </div>
+                            <span class="text-xs mt-2 font-semibold text-[#3C3633]">AI Core</span>
+                        </div>
+                        
+                        <!-- Connecting Lines & Pegged Assets -->
+                        <div class="absolute w-full h-full">
+                            <div class="peg-asset absolute top-0 left-1/2 -translate-x-1/2 -mt-4 text-center">
+                                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-md border"><span class="font-bold text-blue-500">BTC</span></div>
+                                <span class="text-xs mt-1 block">Bitcoin</span>
+                            </div>
+                            <div class="peg-asset absolute bottom-0 left-1/2 -translate-x-1/2 -mb-4 text-center">
+                                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-md border"><span class="font-bold text-purple-600">SOL</span></div>
+                                <span class="text-xs mt-1 block">Solana</span>
+                            </div>
+                            <div class="peg-asset absolute top-1/2 left-0 -translate-y-1/2 -ml-4 text-center">
+                                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-md border"><span class="font-bold text-green-500">USDT</span></div>
+                                <span class="text-xs mt-1 block">Tether</span>
+                            </div>
+                            <div class="peg-asset absolute top-1/2 right-0 -translate-y-1/2 -mr-4 text-center">
+                                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-md border"><span class="font-bold text-blue-800">XRP</span></div>
+                                <span class="text-xs mt-1 block">Ripple</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Staking & Rewards -->
+                <div class="glass-card rounded-2xl p-6">
+                    <h3 class="font-bold text-xl mb-4 text-[#3C3633]">Sustainable Staking Layers</h3>
+                     <p class="text-gray-700 mb-6">SKYSCOPE aims to offer lucrative staking rewards. The system is designed to leverage the underlying pegged assets for yield generation across DeFi, enhancing capital efficiency and creating multi-layered earnings for holders. Select a mechanism below to learn more.</p>
+                    <div id="staking-tabs" class="flex flex-wrap gap-2 mb-4">
+                        <button data-tab="native" class="tab text-sm px-4 py-2 rounded-full transition duration-300">Native Staking</button>
+                        <button data-tab="liquid" class="tab text-sm px-4 py-2 rounded-full transition duration-300">Liquid Staking</button>
+                        <button data-tab="yield" class="tab text-sm px-4 py-2 rounded-full transition duration-300">Yield Farming</button>
+                    </div>
+                    <div id="staking-content">
+                        <!-- Content will be injected by JS -->
+                    </div>
+                </div>
+            </div>
+            <div class="mt-12">
+                 <h3 class="font-bold text-xl mb-4 text-center text-[#3C3633]">Comparing Potential Staking Yields</h3>
+                 <p class="text-gray-600 text-center max-w-2xl mx-auto mb-6">This chart illustrates the potential APY ranges for different staking mechanisms as outlined in the analysis. Note that higher yields often correspond with higher risks, such as smart contract vulnerabilities or impermanent loss.</p>
+                 <div class="chart-container glass-card rounded-2xl p-4">
+                     <canvas id="stakingChart"></canvas>
+                 </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Technology -->
+        <section id="technology" class="py-20 bg-[#E0A75E]/10 rounded-2xl">
+             <h2 class="text-3xl font-bold mb-2">The Technology Stack</h2>
+             <p class="text-lg text-gray-600 mb-12 max-w-3xl">SKYSCOPE is built on the Solana blockchain to leverage its speed and scalability. This section covers the core technical implementation, the token creation process, and the paramount importance of smart contract security.</p>
+             <div class="grid md:grid-cols-3 gap-8 mb-12">
+                 <div class="text-center p-6">
+                     <div class="text-4xl text-[#739072] mb-2">⚡️</div>
+                     <h4 class="font-semibold text-lg">High Throughput</h4>
+                     <p class="text-gray-600 text-sm">Solana processes tens of thousands of transactions per second, ensuring a seamless user experience.</p>
+                 </div>
+                  <div class="text-center p-6">
+                     <div class="text-4xl text-[#739072] mb-2">💸</div>
+                     <h4 class="font-semibold text-lg">Low Transaction Fees</h4>
+                     <p class="text-gray-600 text-sm">Fees are fractions of a cent, making SKYSCOPE accessible for high-frequency use and micro-transactions.</p>
+                 </div>
+                  <div class="text-center p-6">
+                     <div class="text-4xl text-[#739072] mb-2">🛡️</div>
+                     <h4 class="font-semibold text-lg">Robust Security</h4>
+                     <p class="text-gray-600 text-sm">While powerful, the system requires rigorous security practices to be "fail-proof" and protect assets.</p>
+                 </div>
+             </div>
+
+             <div class="glass-card rounded-2xl p-8">
+                <h3 class="font-bold text-xl mb-6 text-center text-[#3C3633]">Conceptual Token Creation Flow & Security Checklist</h3>
+                 <div class="grid md:grid-cols-2 gap-8">
+                     <div>
+                        <p class="text-gray-700 mb-4">Creating an SPL token on Solana involves several key steps. Below is a simplified, conceptual flow. A production-ready token requires extensive development and auditing beyond this basic outline.</p>
+                        <ol class="relative border-l border-gray-300 ml-4">                  
+                            <li class="mb-10 ml-6">            
+                                <span class="absolute flex items-center justify-center w-6 h-6 bg-[#739072] rounded-full -left-3 ring-8 ring-white">1</span>
+                                <h4 class="font-semibold">Setup & Key Generation</h4>
+                                <p class="text-sm text-gray-600">Install CLI tools and generate secure keypairs for ownership and mint authority.</p>
+                            </li>
+                            <li class="mb-10 ml-6">
+                                <span class="absolute flex items-center justify-center w-6 h-6 bg-[#739072] rounded-full -left-3 ring-8 ring-white">2</span>
+                                <h4 class="font-semibold">Create Token Mint</h4>
+                                <p class="text-sm text-gray-600">Deploy the core token account on-chain, defining parameters like decimals (e.g., 9).</p>
+                            </li>
+                             <li class="mb-10 ml-6">
+                                <span class="absolute flex items-center justify-center w-6 h-6 bg-[#739072] rounded-full -left-3 ring-8 ring-white">3</span>
+                                <h4 class="font-semibold">Mint & Distribute</h4>
+                                <p class="text-sm text-gray-600">Mint the initial supply and distribute tokens, including the creator's pool share.</p>
+                            </li>
+                            <li class="ml-6">
+                                <span class="absolute flex items-center justify-center w-6 h-6 bg-[#739072] rounded-full -left-3 ring-8 ring-white">4</span>
+                                <h4 class="font-semibold">Secure & Finalize</h4>
+                                <p class="text-sm text-gray-600">Optionally revoke mint authority for a fixed supply and ensure all permissions are correct.</p>
+                            </li>
+                        </ol>
+                     </div>
+                     <div>
+                        <p class="text-gray-700 mb-4">Security is non-negotiable. A "future-proof" token must adhere to the highest standards to prevent exploits and protect holders. This involves a multi-layered defense strategy.</p>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-3 mt-1">✓</span>
+                                <div><strong class="block">Independent Code Audits:</strong> Mandatory reviews by reputable third-party firms to identify vulnerabilities before deployment.</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-3 mt-1">✓</span>
+                                <div><strong class="block">Extensive Testing:</strong> Rigorous unit, integration, and stress testing, including fuzz testing and attack simulations.</div>
+                            </li>
+                             <li class="flex items-start">
+                                <span class="text-green-500 mr-3 mt-1">✓</span>
+                                <div><strong class="block">Secure Coding Practices:</strong> Implementing proper access controls, avoiding hardcoded keys, and using safe math libraries to prevent overflows.</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-3 mt-1">✓</span>
+                                <div><strong class="block">Resilience Planning:</strong> Designing contracts to be resistant to flash loan attacks and other economic exploits.</div>
+                            </li>
+                        </ul>
+                     </div>
+                 </div>
+             </div>
+        </section>
+
+        <!-- Section 4: Growth Strategy -->
+        <section id="strategy" class="py-20">
+            <h2 class="text-3xl font-bold mb-2">Pathways to Global Adoption</h2>
+            <p class="text-lg text-gray-600 mb-12 max-w-3xl">Achieving 90%+ global adoption requires a robust strategy for interoperability, market liquidity, and community engagement. The plan focuses on seamless cross-chain integration and building a loyal, active user base.</p>
+
+            <div class="grid md:grid-cols-2 gap-8 items-start">
+                 <!-- Interoperability -->
+                <div class="glass-card rounded-2xl p-6">
+                    <h3 class="font-bold text-xl mb-4 text-[#3C3633]">Interoperability & Liquidity</h3>
+                    <p class="text-gray-700 mb-6">For SKYSCOPE to thrive, it must move freely across the Web3 ecosystem. The strategy involves integrating with cross-chain bridges, decentralized exchanges (DEXs), and lending platforms to maximize utility and ensure deep liquidity.</p>
+                     <div class="space-y-4">
+                        <details class="group">
+                            <summary class="flex justify-between items-center font-semibold cursor-pointer p-3 bg-white/50 rounded-lg">
+                                <span>Cross-Chain Bridges</span>
+                                <span class="group-open:rotate-180 transition-transform">▼</span>
+                            </summary>
+                            <p class="text-sm text-gray-600 p-3">Integrate with protocols like Wormhole and Allbridge to enable SKYSCOPE transfers between Solana, Ethereum, BSC, and other major chains.</p>
+                        </details>
+                         <details class="group">
+                            <summary class="flex justify-between items-center font-semibold cursor-pointer p-3 bg-white/50 rounded-lg">
+                                <span>DEX & Liquidity Pools</span>
+                                <span class="group-open:rotate-180 transition-transform">▼</span>
+                            </summary>
+                            <p class="text-sm text-gray-600 p-3">List on major DEXs like Raydium (Solana) and Uniswap (via bridge) to create deep, capital-efficient liquidity pools, reducing slippage for traders.</p>
+                        </details>
+                         <details class="group">
+                            <summary class="flex justify-between items-center font-semibold cursor-pointer p-3 bg-white/50 rounded-lg">
+                                <span>Lending & Borrowing</span>
+                                <span class="group-open:rotate-180 transition-transform">▼</span>
+                            </summary>
+                            <p class="text-sm text-gray-600 p-3">Enable SKYSCOPE to be used as collateral on platforms like Solend and Aave, creating new use cases and driving demand.</p>
+                        </details>
+                    </div>
+                </div>
+
+                <!-- Community & Marketing -->
+                <div class="glass-card rounded-2xl p-6">
+                    <h3 class="font-bold text-xl mb-4 text-[#3C3633]">Community & Marketing Excellence</h3>
+                    <p class="text-gray-700 mb-6">A strong, engaged community is the cornerstone of success. Growth will be driven by transparency, clear utility, and aligning incentives between the project and its holders through governance.</p>
+                     <ul class="space-y-3">
+                        <li class="flex items-center"><span class="text-[#739072] mr-3">●</span><div><strong>Transparency & Authenticity:</strong> Regular AMAs, development updates, and open communication.</div></li>
+                        <li class="flex items-center"><span class="text-[#739072] mr-3">●</span><div><strong>Clear Utility & Governance:</strong> Empowering holders with voting rights in a DAO to guide the project's future.</div></li>
+                        <li class="flex items-center"><span class="text-[#739072] mr-3">●</span><div><strong>Incentive Alignment:</strong> Using airdrops, bounties, and perform-to-earn quests to drive participation and viral growth.</div></li>
+                         <li class="flex items-center"><span class="text-[#739072] mr-3">●</span><div><strong>Strategic Partnerships:</strong> Collaborating with influencers and other projects to expand reach and build credibility.</div></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Risks -->
+        <section id="risks" class="py-20 bg-[#E0A75E]/10 rounded-2xl">
+            <h2 class="text-3xl font-bold mb-2">Critical Considerations & Risks</h2>
+            <p class="text-lg text-gray-600 mb-12 max-w-3xl">Transparency is paramount. This section directly addresses the significant challenges and regulatory hurdles identified in the project analysis, providing a clear-eyed view of the path ahead. Understanding these risks is crucial for a complete picture of the token's potential.</p>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Economic Realities -->
+                <div class="glass-card rounded-2xl p-6">
+                    <h3 class="font-bold text-xl mb-4 text-[#3C3633]">Economic & Technical Realities</h3>
+                    <div class="space-y-6">
+                        <div>
+                            <h4 class="font-semibold text-lg">Challenge: The "No Initial Funding" Paradox</h4>
+                            <p class="text-gray-700 mt-1">The report highlights a fundamental conflict: a token pegged to other assets cannot generate value "without initial funding." Stable, valuable tokens require substantial collateral to back their worth and absorb market shocks.</p>
+                        </div>
+                         <div>
+                            <h4 class="font-semibold text-lg text-[#739072]">Solution: Robust Collateralization Model</h4>
+                            <p class="text-gray-700 mt-1">The path forward requires a clear, transparent, and adequately capitalized collateral model. This means moving beyond the initial concept to secure genuine value backing for the peg and to ensure staking yields are sustainable, not purely inflationary.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Regulatory Roadmap -->
+                <div class="glass-card rounded-2xl p-6">
+                    <h3 class="font-bold text-xl mb-4 text-[#3C3633]">Australian Regulatory Roadmap</h3>
+                    <p class="text-gray-700 mb-4">Operating in Australia requires strict compliance. Due to its features, SKYSCOPE is almost certainly a 'financial product' and will require registrations with two key bodies.</p>
+                     <ul class="space-y-4">
+                        <li class="flex items-start">
+                             <div class="w-12 h-12 rounded-lg bg-[#739072] text-white flex items-center justify-center font-bold text-lg mr-4 flex-shrink-0">ASIC</div>
+                             <div>
+                                <strong class="block">Financial Product Classification</strong>
+                                <p class="text-sm text-gray-600">Must obtain an Australian Financial Services Licence (AFSL) due to its nature as a potential Managed Investment Scheme, Derivative, or Security.</p>
+                             </div>
+                        </li>
+                         <li class="flex items-start">
+                             <div class="w-12 h-12 rounded-lg bg-[#739072] text-white flex items-center justify-center font-bold text-lg mr-4 flex-shrink-0">AUSTRAC</div>
+                             <div>
+                                <strong class="block">Digital Currency Exchange (DCE)</strong>
+                                <p class="text-sm text-gray-600">Must register as a DCE and implement a robust Anti-Money Laundering (AML/CTF) program, including KYC and transaction monitoring.</p>
+                             </div>
+                        </li>
+                     </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 6: Blueprint -->
+        <section id="blueprint" class="py-20">
+            <h2 class="text-3xl font-bold mb-2 text-center">The Blueprint for Success</h2>
+            <p class="text-lg text-gray-600 mb-12 max-w-3xl mx-auto text-center">The analysis concludes with a clear, actionable roadmap. By addressing its core economic and regulatory challenges head-on, SKYSCOPE can transform from an ambitious concept into a sustainable, trusted, and globally adopted digital asset.</p>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="p-6 border border-gray-200/80 rounded-xl">
+                    <h4 class="font-semibold text-lg mb-2">1. Establish Robust Collateralization</h4>
+                    <p class="text-sm text-gray-600">Develop a transparent, over-collateralized model to ensure genuine value backing for the peg and sustainable staking yields.</p>
+                </div>
+                <div class="p-6 border border-gray-200/80 rounded-xl">
+                    <h4 class="font-semibold text-lg mb-2">2. Prioritize Unwavering Security</h4>
+                    <p class="text-sm text-gray-600">Commit to the highest standards of smart contract development, including mandatory independent audits and continuous monitoring.</p>
+                </div>
+                <div class="p-6 border border-gray-200/80 rounded-xl">
+                    <h4 class="font-semibold text-lg mb-2">3. Drive Strategic Interoperability</h4>
+                    <p class="text-sm text-gray-600">Actively pursue cross-chain solutions and deep liquidity pools to maximize tradability, utility, and reach across the DeFi ecosystem.</p>
+                </div>
+                <div class="p-6 border border-gray-200/80 rounded-xl">
+                    <h4 class="font-semibold text-lg mb-2">4. Cultivate Community-Centric Growth</h4>
+                    <p class="text-sm text-gray-600">Build an authentic, engaged community through transparency, clear utility, and incentivized participation via a DAO.</p>
+                </div>
+                 <div class="p-6 border border-gray-200/80 rounded-xl">
+                    <h4 class="font-semibold text-lg mb-2">5. Ensure Proactive Regulatory Compliance</h4>
+                    <p class="text-sm text-gray-600">Engage legal counsel immediately to proactively navigate ASIC and AUSTRAC requirements, ensuring full compliance from day one.</p>
+                </div>
+                 <div class="p-6 border border-gray-200/80 rounded-xl">
+                    <h4 class="font-semibold text-lg mb-2">6. Integrate AI Strategically</h4>
+                    <p class="text-sm text-gray-600">Leverage AI for dynamic rebalancing and risk management, but as an enhancement to—not a replacement for—sound economic fundamentals.</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section 7: Creator -->
+        <footer id="creator" class="py-10 border-t border-gray-200/50 text-center">
+            <h3 class="font-bold text-xl mb-2 text-[#3C3633]">Project Vision by</h3>
+            <p class="text-lg font-semibold text-[#739072]">Miss Casey Jay Topojani</p>
+            <p class="text-gray-600">Skyscope Sentinel Intelligence</p>
+            <div class="mt-4 text-sm text-gray-500 space-x-4">
+                <span>ABN: 11287984779</span>
+                <span>|</span>
+                <span>skyscopesentinel@gmail.com</span>
+                <span>|</span>
+                <span>Github: skyscope-sentinel</span>
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- Chart.js script MUST be loaded BEFORE your custom script that uses it -->
+    <!-- Removed 'defer' to ensure immediate execution when the script is parsed -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Place all Chart.js initialization and related logic within a function
+        // that is called once Chart.js is guaranteed to be loaded.
+        function initializeChartAndContent() {
+            // Staking Tab Data
+            const stakingData = {
+                native: {
+                    title: 'Native Staking',
+                    apy: '5-15% APR',
+                    source: 'Network fees, controlled inflation',
+                    sustainability: 'Relies on transaction fee revenue and long-term utility demand for SKYSCOPE.',
+                    considerations: 'Involves lock-up periods and potential slashing penalties if a validator misbehaves.'
+                },
+                liquid: {
+                    title: 'Liquid Staking',
+                    apy: '10-20% APY',
+                    source: 'Native staking rewards + DeFi yield',
+                    sustainability: 'High capital efficiency as Liquid Staking Tokens (LSTs) can be used elsewhere in DeFi.',
+                    considerations: 'Adds smart contract risk from the liquid staking protocol and potential depeg of the LST.'
+                },
+                yield: {
+                    title: 'Yield Farming',
+                    apy: '10-25% APY',
+                    source: 'Trading fees, LP rewards',
+                    sustainability: 'Dependent on high trading volume. High APYs are often temporary and carry higher risk.',
+                    considerations: 'Risk of impermanent loss and smart contract vulnerabilities of the DEX/LP.'
+                }
+            };
+
+            const stakingTabsContainer = document.getElementById('staking-tabs');
+            const stakingContentContainer = document.getElementById('staking-content');
+            
+            function updateStakingContent(tabName) {
+                const data = stakingData[tabName];
+                stakingContentContainer.innerHTML = `
+                    <div class="bg-white/50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-lg">${data.title} <span class="text-sm font-normal text-green-600">${data.apy}</span></h4>
+                        <p class="text-sm mt-2"><strong class="text-gray-700">Value Source:</strong> ${data.source}</p>
+                        <p class="text-sm mt-2"><strong class="text-gray-700">Sustainability:</strong> ${data.sustainability}</p>
+                        <p class="text-sm mt-2"><strong class="text-gray-700">Key Considerations:</strong> ${data.considerations}</p>
+                    </div>
+                `;
+                 // Update active tab style
+                document.querySelectorAll('#staking-tabs .tab').forEach(t => t.classList.remove('active'));
+                document.querySelector(`#staking-tabs .tab[data-tab="${tabName}"]`).classList.add('active');
+            }
+
+            stakingTabsContainer.addEventListener('click', (e) => {
+                if (e.target.matches('.tab')) {
+                    const tabName = e.target.dataset.tab;
+                    updateStakingContent(tabName);
+                }
+            });
+
+            // Initial content
+            updateStakingContent('native');
+            
+            // Chart.js implementation
+            // Now, Chart should be defined because we're inside a callback
+            // that fires after Chart.js is loaded.
+            const ctx = document.getElementById('stakingChart').getContext('2d');
+            const stakingChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Native Staking', 'Liquid Staking', 'Yield Farming (LP)'],
+                    datasets: [{
+                        label: 'Illustrative APY Range (%)',
+                        data: [[5, 15], [10, 20], [10, 25]],
+                        backgroundColor: [
+                            'rgba(115, 144, 114, 0.6)', // #739072
+                            'rgba(115, 144, 114, 0.8)',
+                            'rgba(115, 144, 114, 1.0)',
+                        ],
+                        borderColor: [
+                            'rgb(115, 144, 114)',
+                            'rgb(115, 144, 114)',
+                            'rgb(115, 144, 114)',
+                        ],
+                        borderWidth: 1,
+                        borderRadius: 5,
+                        borderSkipped: false,
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Annual Percentage Yield (APY %)'
+                            }
+                        },
+                        y: { // Added y-axis configuration
+                            grid: {
+                                display: false // Hides y-axis grid lines for cleaner look
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const val = context.raw;
+                                    return `${context.dataset.label}: ${val[0]}% - ${val[1]}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+
+            // Active nav link scrolling
+            const sections = document.querySelectorAll('section, footer');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 100) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        }
+
+        // Call the initialization function after DOMContentLoaded,
+        // and crucially, after the Chart.js script has loaded.
+        // We'll attach the initialization to the Chart.js script's onload event.
+        const chartJsScript = document.querySelector('script[src*="chart.js"]');
+        if (chartJsScript) {
+            chartJsScript.onload = initializeChartAndContent;
+            chartJsScript.onerror = () => console.error("Failed to load Chart.js script.");
+        } else {
+            console.error("Chart.js script tag not found.");
+        }
+    </script>
+</body>
+</html>
