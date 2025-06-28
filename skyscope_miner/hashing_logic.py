@@ -1,212 +1,217 @@
 import time
-import random
-import hashlib # For basic hashing simulation, NOT kHeavyHash
+import random # Only for nonce simulation if not iterating fully
+import sys
+import os
 
-# from .core_utils import get_cpu_info, get_ram_info # For type hinting if needed
+# Ensure the kheavyhash_py module can be imported
+try:
+    from .kheavyhash_py import kheavyhash_conceptual_python
+except ImportError:
+    # Fallback for direct execution or if the tool places files differently
+    from kheavyhash_py import kheavyhash_conceptual_python
+
 
 class SkyscopeHashQ:
     """
-    Conceptual Hashing Logic for SKYSCOPE Miner.
-    This class simulates the mining process, including the conceptual
-    "skyscope-hash-Q" RAM-boosted approach.
+    Hashing Logic for SKYSCOPE Miner, integrating the Python kHeavyHash implementation.
+    This class manages the mining process for a given block template.
 
-    NOTE: This does NOT implement the actual kHeavyHash algorithm used by Kaspa.
-    A real implementation would require:
-    1. A Python library that implements kHeavyHash (rare, often inefficient for PoW).
-    2. Integration with a C/C++/Rust kHeavyHash library via CFFI, Cython, or similar.
-    3. Wrapping an existing command-line Kaspa CPU miner and managing its process.
+    "skyscope-hash-Q" RAM Boost Concept:
+    ------------------------------------
+    The idea behind "skyscope-hash-Q" is to leverage user-configurable system RAM
+    to *conceptually* enhance the CPU-bound kHeavyHash algorithm. This is an R&D area.
+    Potential theoretical approaches (not implemented in the current Python kHeavyHash):
 
-    The "skyscope-hash-Q" RAM boost is a conceptual R&D goal. How RAM could
-    effectively boost a CPU-bound algorithm like kHeavyHash would require
-    significant research, possibly involving:
-    - Pre-computation of parts of the hash if the algorithm has divisible sections.
-    - Custom lookup tables or data structures stored in RAM that accelerate specific
-      bottleneck operations within kHeavyHash (highly speculative).
-    - Optimizing memory access patterns for the CPU's cache hierarchy, potentially
-      using RAM to stage data.
-    This simulation provides a high-level idea, not a cryptographic implementation.
+    1.  **Pre-computation & Caching of Intermediate kHeavyHash States:**
+        *   If kHeavyHash involves repetitive calculations on certain parts of its internal state
+          or uses fixed lookup tables that are large, these could be pre-computed or
+          cached in the allocated RAM.
+        *   For example, if parts of the matrix multiplication in kHeavyHash could be broken down
+          and intermediate products for common input patterns stored.
+        *   Challenge: kHeavyHash is designed to be memory-hard in a way that makes caching
+          difficult or less effective; its internal state changes rapidly with each hash attempt.
+          Identifying truly static or slowly changing intermediates that are large enough to
+          benefit from RAM caching (beyond CPU caches) is key.
+
+    2.  **Optimized Data Structures for kHeavyHash State:**
+        *   The algorithm's internal state (e.g., the large matrix) could be organized in RAM
+          using data structures that are tailored for CPU cache lines and memory access patterns,
+          potentially reducing latency if Python's default object overhead is significant for
+          the matrix elements.
+        *   Challenge: Python's abstraction layer makes fine-grained memory layout control difficult.
+          This would be more applicable to a C/C++/Rust implementation of kHeavyHash.
+
+    3.  **Task Scheduling & Data Staging for Multi-Core CPU:**
+        *   If mining is parallelized across multiple CPU cores (which SKYSCOPE Miner aims to do),
+          a large RAM buffer could be used to stage upcoming work units (block template variations)
+          or manage shared data structures between threads/processes more effectively than relying
+          solely on inter-process communication or smaller CPU caches for certain types of shared data.
+        *   Challenge: kHeavyHash work units are largely independent per nonce, so shared data
+          benefit might be limited unless there's a meta-level optimization.
+
+    4.  **"Quantum-style" (Figurative) Parallel Search Space Exploration:**
+        *   This is highly speculative. It might involve using RAM to manage multiple, slightly
+          varied search paths or parameter sets for the hashing process simultaneously, then
+          heuristically prioritizing paths that seem more "promising." This is far from
+          standard PoW mining and enters into heuristic search / AI territory.
+        *   Challenge: Defining "promising" paths in PoW without just doing the work is hard.
+
+    **Current Implementation Status:**
+    The `ram_percent` and `conceptual_ram_info` are passed to this class. However, the
+    `kheavyhash_conceptual_python` function (being a direct, albeit slow, structural
+    representation) does not currently incorporate these advanced RAM usage strategies.
+    The RAM allocation serves as a user-configurable parameter for this *conceptual framework*.
+    A true performance impact would require a low-level kHeavyHash implementation designed
+    from the ground up to exploit these RAM-based strategies.
     """
 
-    def __init__(self, cpu_info: dict, ram_allocation_percent: int, conceptual_ram_buffer_info: dict | None = None):
-        """
-        Initializes the conceptual hashing logic.
-
-        Args:
-            cpu_info (dict): Information about CPU cores being used.
-                             Expected keys: 'cores_to_use'.
-            ram_allocation_percent (int): Percentage of RAM conceptually allocated.
-            conceptual_ram_buffer_info (dict | None): Information about the conceptual RAM buffer.
-                                                     Not directly used in this simulation's hashing
-                                                     but acknowledged for the concept.
-        """
+    def __init__(self, cpu_info: dict, ram_allocation_percent: int, conceptual_ram_info: dict | None = None):
         self.cores_to_use = cpu_info.get('cores_to_use', 1)
         self.ram_percent = ram_allocation_percent
-        self.conceptual_ram_info = conceptual_ram_buffer_info
+        self.conceptual_ram_info = conceptual_ram_info # Store for potential future use/logging
 
-        # Base hash operations per second per core (purely illustrative for simulation)
-        self.base_hash_ops_per_core_sec = 10000
+        self.hashes_calculated_session = 0
+        self.session_start_time = time.time()
 
-        # Conceptual RAM boost factor: e.g., each 25% RAM gives a 10-20% boost
-        # This is highly speculative and for simulation purposes only.
-        self.ram_boost_factor = 1.0
-        if self.ram_percent >= 80:
-            self.ram_boost_factor = 1.8 # Max conceptual boost
-        elif self.ram_percent >= 75:
-            self.ram_boost_factor = 1.6
-        elif self.ram_percent >= 50:
-            self.ram_boost_factor = 1.4
-        elif self.ram_percent >= 25:
-            self.ram_boost_factor = 1.2
+        print(f"SkyscopeHashQ Initialized: Cores for use = {self.cores_to_use}, Configured RAM % for skyscope-hash-Q = {self.ram_percent}")
+        if self.ram_percent > 0 and self.conceptual_ram_info:
+            print(f"  Conceptual RAM for skyscope-hash-Q: {self.conceptual_ram_info.get('allocated_gb_conceptual', 0.0):.2f} GB "
+                  f"({self.conceptual_ram_info.get('message', '')})")
+        elif self.ram_percent > 0:
+            print(f"  Conceptual RAM %: {self.ram_percent} (Detailed info not provided)")
+        print("  Note: Current kHeavyHash is Python-based; performance will be very low.")
+        print("  'skyscope-hash-Q' RAM features are conceptual for this version.")
 
-        self.simulated_effective_hash_ops_sec = (
-            self.base_hash_ops_per_core_sec * self.cores_to_use * self.ram_boost_factor
-        )
+    def get_session_hashrate(self) -> float:
+        """Calculates average hashrate for the current mining session (since last job or init)."""
+        elapsed_time = time.time() - self.session_start_time
+        if elapsed_time == 0 or self.hashes_calculated_session == 0:
+            return 0.0
+        return self.hashes_calculated_session / elapsed_time
 
-        # print(f"Conceptual SkyscopeHashQ initialized: Cores={self.cores_to_use}, RAM %={self.ram_percent}, "
-        #       f"RAM Boost Factor={self.ram_boost_factor:.2f}, "
-        #       f"Simulated HashOps/sec={self.simulated_effective_hash_ops_sec:,.0f}")
-
-    def mine_block_conceptual(self, block_template: dict) -> dict | None:
+    def mine_block(self, block_template: dict, target_nonce_range: int = 2**32, hashes_per_update: int = 100) -> dict | None:
         """
-        Simulates the process of mining a block based on a template.
-        This does NOT perform real kHeavyHash.
+        Attempts to find a valid nonce for the given block template using the
+        Python kHeavyHash implementation.
 
         Args:
-            block_template (dict): Conceptual block template data from KaspaConnector.
-                                   Expected keys: 'target_difficulty', 'block_header_data', 'job_id'.
+            block_template (dict): Block template data. Expected keys:
+                                   'target_difficulty_int', 'block_header_data_prefix', 'job_id'.
+            target_nonce_range (int): Max nonce to try.
+            hashes_per_update (int): How many hashes before printing a status update.
 
         Returns:
-            A dictionary representing the "solved" block with a conceptual nonce,
-            or None if simulation is interrupted or fails.
+            Solved block dictionary or None.
         """
         if not block_template:
-            print("Error (HashingLogic): No block template provided.")
+            print("Error (HashingLogic): No block template provided.", file=sys.stderr)
             return None
 
-        target_difficulty_str = block_template.get("target_difficulty", "00ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
-        header_data = block_template.get("block_header_data", b"default_header")
+        target_as_int = block_template.get("target_difficulty_int")
+        block_header_prefix = block_template.get("block_header_data_prefix") # Bytes
         job_id = block_template.get("job_id", "unknown_job")
 
-        # Convert hex target to an integer for comparison (simplified)
-        # A real target is a large number, and comparison is hash < target.
-        # For simulation, we'll use number of leading zeros or a simple threshold.
-        # This simulation will be based on "number of operations to find a solution".
-        # A lower target_difficulty_str (hex) means higher actual difficulty (smaller target number).
-        # Let's simulate difficulty by how many hashes we need to try.
-        # This is extremely simplified.
-        try:
-            # Example: if target starts with "0000", very hard. "00ff", easier.
-            # For simulation, let's map this to a number of hashes.
-            # Higher leading zeros in target usually mean harder in PoW.
-            # Let's count non-zero hex digits from a fixed point.
-            simulated_difficulty_level = target_difficulty_str.count('f')
-            # Rough: more 'f's = easier in this simulation. Max 'f's = 60 (for a 256-bit hash if all are 'f' after "00")
-            # We want more 'f's to mean fewer hashes needed.
-            required_hashes_to_find = int((64 - simulated_difficulty_level + 1) * self.base_hash_ops_per_core_sec * 2) # Scale factor
-            if required_hashes_to_find <=0 : required_hashes_to_find = self.base_hash_ops_per_core_sec # minimum
-
-        except ValueError:
-            print(f"Error (HashingLogic): Invalid target difficulty format: {target_difficulty_str}")
+        if target_as_int is None or block_header_prefix is None:
+            print("Error (HashingLogic): Block template missing critical data.", file=sys.stderr)
             return None
 
-        print(f"Conceptual Mining (Job: {job_id}): Simulating ~{required_hashes_to_find:,.0f} hash operations "
-              f"at ~{self.simulated_effective_hash_ops_sec:,.0f} ops/sec.")
+        # Reset session stats for this new job attempt
+        self.hashes_calculated_session = 0
+        self.session_start_time = time.time()
 
-        estimated_time_to_find_sec = required_hashes_to_find / self.simulated_effective_hash_ops_sec
-        # print(f"  Estimated time to find a simulated solution: {estimated_time_to_find_sec:.2f} seconds.")
+        print(f"\n[HashingLogic] Starting Job: {job_id} | Target: {target_as_int:#0{66}x}")
+        print(f"  Header Prefix (first 16B): {block_header_prefix[:16].hex()}...")
+        # Nonce is typically uint64
 
-        nonce = 0
-        start_time = time.time()
-        hashes_done_total = 0
-
-        # Simulate the search for a nonce
-        # In a real miner, this loop would call kHeavyHash(header_data + nonce)
-        # and check if hash_result < target_difficulty_as_int.
         try:
-            while hashes_done_total < required_hashes_to_find:
-                # Simulate doing a batch of hashes based on time elapsed
-                time.sleep(0.1) # Check every 100ms
-                hashes_this_tick = self.simulated_effective_hash_ops_sec * 0.1
-                hashes_done_total += hashes_this_tick
-                nonce += int(hashes_this_tick) # Increment nonce proportionally
+            for nonce in range(target_nonce_range):
+                nonce_bytes = nonce.to_bytes(8, 'little')
+                header_with_nonce = block_header_prefix + nonce_bytes
 
-                # Periodically print progress (optional)
-                # if int(hashes_done_total) % int(self.simulated_effective_hash_ops_sec * 1) == 0 : # every 1 sec of work
-                #    print(f"  Simulated progress: {hashes_done_total*100/required_hashes_to_find:.1f}% done, nonce ~{nonce}")
+                current_hash_bytes = kheavyhash_conceptual_python(header_with_nonce)
+                self.hashes_calculated_session += 1
 
-                # For this simulation, we assume a solution is found once enough hashes are "tried".
-                if hashes_done_total >= required_hashes_to_find:
-                    current_time = time.time()
-                    time_taken = current_time - start_time
-                    final_conceptual_hash = hashlib.sha256((str(header_data) + str(nonce)).encode()).hexdigest()
+                current_hash_int = int.from_bytes(current_hash_bytes, 'big')
 
-                    print(f"Conceptual Solution Found for Job {job_id}!")
-                    print(f"  Nonce (simulated): {nonce}")
-                    print(f"  Time taken (simulated): {time_taken:.2f}s")
-                    print(f"  Final Conceptual Hash (SHA256, not kHeavyHash): {final_conceptual_hash[:16]}...")
-
-                    solved_block = {
+                if current_hash_int < target_as_int:
+                    time_taken = time.time() - self.session_start_time
+                    print(f"\n\033[1m\033[92m[HashingLogic] Solution Found for Job {job_id}!\033[0m")
+                    print(f"  Nonce: {nonce} (0x{nonce:016x}) | Time: {time_taken:.2f}s | Hashes: {self.hashes_calculated_session}")
+                    print(f"  Found Hash: {current_hash_bytes.hex()}")
+                    # print(f"  Target Was: {target_as_int:#0{66}x}")
+                    return {
                         "job_id": job_id,
-                        "header_with_nonce": str(header_data) + str(nonce), # Simplified
+                        "header_with_nonce_hex": header_with_nonce.hex(),
                         "nonce": nonce,
-                        "hash_result": final_conceptual_hash, # This is NOT a Kaspa valid hash
-                        "mined_by": "SKYSCOPE_Miner_Conceptual"
+                        "hash_result_hex": current_hash_bytes.hex(),
                     }
-                    return solved_block
+
+                if (nonce + 1) % hashes_per_update == 0:
+                    current_hr = self.get_session_hashrate()
+                    sys.stdout.write(f"\r[HashingLogic] Job {job_id}: Nonce {nonce+1}, HR: {current_hr:.2f} H/s, LastHash: {current_hash_bytes.hex()[:10]}...")
+                    sys.stdout.flush()
 
         except KeyboardInterrupt:
-            print("Mining simulation interrupted by user.")
+            print("\n[HashingLogic] Mining interrupted by user (Ctrl+C).", file=sys.stderr)
+            return None
+        except Exception as e:
+            print(f"\n[HashingLogic] Error during hashing: {e}", file=sys.stderr)
+            import traceback
+            traceback.print_exc()
             return None
 
-        # Should be reached if loop finishes due to finding solution
-        return None # Fallback, though logic above should return earlier.
+        current_hr = self.get_session_hashrate()
+        print(f"\n[HashingLogic] No solution for Job {job_id} in {target_nonce_range} nonces. Avg HR: {current_hr:.2f} H/s.")
+        return None
 
 
 if __name__ == '__main__':
-    print("--- SkyscopeHashQ Conceptual Test ---")
+    print("--- SkyscopeHashQ with Python kHeavyHash Integration Test (Conceptual) ---")
 
-    # Mock CPU and RAM info
-    mock_cpu_info = {'cores_to_use': 4}
-    mock_ram_percent = 50 # 50%
+    # Mock CPU and RAM info - ram_percent's effect is purely conceptual in this Python version
+    mock_cpu_info = {'cores_to_use': 1}
+    mock_ram_percent = 25
+    mock_ram_details = {'allocated_gb_conceptual': 2.0, 'message': 'Conceptual 2GB RAM ready for skyscope-hash-Q'}
 
-    hasher = SkyscopeHashQ(mock_cpu_info, mock_ram_percent)
+    hasher = SkyscopeHashQ(mock_cpu_info, mock_ram_percent, mock_ram_details)
 
-    # Mock block template
+    # For Python kHeavyHash, target needs to be extremely high (easy) to find a solution quickly.
+    # A typical Kaspa target would take geological time with Python.
+    # Max 256-bit hash value: 2**256 - 1
+    # We set a target that means almost any hash will be a solution.
+    # e.g., accept hashes < 2^255 (meaning only hashes with MSB=1 and all other bits=1 would fail)
+    # This is (2**256 -1) / 2 approximately.
+    # For an even easier test, let's use a target that is almost the max hash value.
+    # target_difficulty_int_for_test = (2**256 - 1) - (2**10) # i.e. almost any hash is a solution
+    target_difficulty_int_for_test = int("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE0", 16) # Very high target
+
     mock_template = {
-        "job_id": "test_job_123",
-        "target_difficulty": "00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffff", # Relatively "easy" for simulation
-        "block_header_data": b"some_kaspa_block_header_data_without_nonce",
+        "job_id": "py_test_job_002",
+        "target_difficulty_int": target_difficulty_int_for_test,
+        "block_header_data_prefix": os.urandom(72), # Real header part before nonce
     }
 
-    print(f"\nStarting conceptual mining for job: {mock_template['job_id']}")
-    solution = hasher.mine_block_conceptual(mock_template)
+    print(f"\nStarting mining for job: {mock_template['job_id']}")
+    print(f"  Target (int): {mock_template['target_difficulty_int']:#0{66}x} (Very Easy for Test)")
+    print(f"  (Test will iterate a small number of nonces due to Python hashing speed)")
+
+    # Limit nonce range for testing to ensure it finishes in reasonable time
+    # Even with an easy target, Python hashing one by one is slow.
+    solution = hasher.mine_block(mock_template, target_nonce_range=1000, hashes_per_update=100)
 
     if solution:
-        print("\nConceptual Solution Details:")
-        for key, value in solution.items():
-            if isinstance(value, str) and len(value) > 60:
-                print(f"  {key}: {value[:50]}...")
-            else:
-                print(f"  {key}: {value}")
+        print("\n\n--- Solution Found ---")
+        print(f"  Job ID: {solution['job_id']}")
+        print(f"  Nonce: {solution['nonce']} (0x{solution['nonce']:016x})")
+        print(f"  Found Hash: {solution['hash_result_hex']}")
+        # print(f"  Header+Nonce (Hex): {solution['header_with_nonce_hex']}")
+        is_valid = int(solution['hash_result_hex'], 16) < mock_template['target_difficulty_int']
+        print(f"  Solution Valid (Hash < Target): {is_valid}")
+        if not is_valid:
+            print("\033[91m  ERROR: Solution found but does not meet target! Check logic.\033[0m")
     else:
-        print("\nNo conceptual solution found or process interrupted.")
+        print("\n\nNo solution found in the limited nonce range for this test (or interrupted).")
 
-    print("\n--- Test with a 'harder' simulated target ---")
-    mock_template_hard = {
-        "job_id": "test_job_789_hard",
-        "target_difficulty": "0000000000000000ffffffffffffffffffffffffffffffffffffffffffff", # "Harder" for simulation
-        "block_header_data": b"another_kaspa_block_header_data",
-    }
-    print(f"\nStarting conceptual mining for job: {mock_template_hard['job_id']}")
-    solution_hard = hasher.mine_block_conceptual(mock_template_hard)
-    if solution_hard:
-        print("\nConceptual Solution Details (Hard Target):")
-        for key, value in solution_hard.items():
-            if isinstance(value, str) and len(value) > 60:
-                print(f"  {key}: {value[:50]}...")
-            else:
-                print(f"  {key}: {value}")
-    else:
-        print("\nNo conceptual solution found for hard target or process interrupted.")
-
-    print("\nNote: This module simulates mining time based on conceptual difficulty and hash power. It does not perform kHeavyHash.")
+    print("\n--- Test Complete ---")
+    print("Note: This test uses a Python kHeavyHash. Performance is illustrative only.")
+    print("The 'skyscope-hash-Q' RAM boost is conceptual in this Python version.")

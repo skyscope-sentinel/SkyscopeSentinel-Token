@@ -3,247 +3,279 @@
 import argparse
 import time
 import sys
-# import threading # Will be needed for actual mining loops
+import os
+import threading
+import signal
+import logging
 
-# Placeholder for future module imports
-# from .core_utils import get_cpu_info, get_ram_info, allocate_ram_for_mining
-# from .kaspa_connector import KaspaConnector
-# from .display_manager import DisplayManager
-# from .rewards_manager import RewardsManager
-# from .hashing_logic import SkyscopeHashQ # Conceptual
+# Project module imports
+try:
+    from . import core_utils
+    from .kaspa_connector import KaspaConnector, KaspaNodeError, KaspaBlockSubmissionError
+    from .hashing_logic import SkyscopeHashQ
+    from .display_manager import DisplayManager
+    from .rewards_manager import RewardsManager
+except ImportError:
+    # Fallback for direct execution if modules are not found in current path
+    # print("Warning: Relative import failed. Attempting import assuming script is in project root or skyscope_miner is in PYTHONPATH.")
+    import core_utils
+    from kaspa_connector import KaspaConnector, KaspaNodeError, KaspaBlockSubmissionError
+    from hashing_logic import SkyscopeHashQ
+    from display_manager import DisplayManager
+    from rewards_manager import RewardsManager
 
-def main():
-    parser = argparse.ArgumentParser(
-        description="SKYSCOPE Miner: CPU-Optimized Kaspa (KAS) Miner with conceptual RAM boost.",
-        formatter_class=argparse.RawTextHelpFormatter
-    )
-    parser.add_argument(
-        "kaspa_address",
-        help="Your Kaspa wallet address for receiving mining rewards."
-    )
-    parser.add_argument(
-        "--node-url",
-        default="127.0.0.1:16110", # Default kaspad gRPC URL
-        help="URL of the kaspad node (e.g., localhost:16110 or a public node)."
-    )
-    parser.add_argument(
-        "--cpu-cores",
-        type=int,
-        default=0, # 0 means use all available cores
-        help="Number of CPU cores to use for mining. (0 for all available - default)"
-    )
-    parser.add_argument(
-        "--ram-percent",
-        type=int,
-        choices=[0, 25, 50, 75, 80],
-        default=0,
-        help="Percentage of system RAM to conceptually allocate for skyscope-hash-Q boost. (default: 0, options: 0, 25, 50, 75, 80)"
-    )
-    parser.add_argument(
-        "--dev-fee-address",
-        type=str,
-        default="kaspa:qqggvdrxjqdgwql4aac8hg0pq2v4z5p46l86f98hq7ax29k7x55v7sycs9kvm",
-        help="Developer fee Kaspa address (default is SKYSCOPE project address)."
-    )
-    parser.add_argument(
-        "--log-level",
-        type=str,
-        choices=['DEBUG', 'INFO', 'WARNING', 'ERROR'],
-        default='INFO',
-        help="Set the logging level (default: INFO)."
-    )
+# --- Constants ---
+# This is a placeholder. Actual Kaspa block reward varies and is complex to determine without full node logic.
+# For solo mining, the miner gets the full block reward + transaction fees found in the block.
+# The GetBlockTemplate response *should* provide enough info to calculate it, or the coinbase tx.
+# For now, we simulate a fixed reward when a block is "found" by our Python hasher.
+CONCEPTUAL_KAS_BLOCK_REWARD = 100.0
 
-    args = parser.parse_args()
+# --- Logging Setup ---
+logger = logging.getLogger(__name__) # Use __name__ for module-level logger
 
-    # --- Placeholder for Initializing Modules ---
-    print_header()
-    print_config(args)
+# --- Global state for graceful shutdown ---
+shutdown_event = threading.Event()
 
-    # Conceptual: Initialize core utilities
-    # cpu_info = get_cpu_info(args.cpu_cores)
-    # ram_info = get_ram_info()
-    # print(f"CPU: Detected {cpu_info['total_cores_detected']} cores, using {cpu_info['cores_to_use']}.")
-    # print(f"RAM: Total {ram_info['total_gb']:.2f} GB, Available {ram_info['available_gb']:.2f} GB.")
-    # if args.ram_percent > 0:
-    #     allocated_ram_gb = ram_info['total_gb'] * (args.ram_percent / 100.0)
-    #     print(f"Attempting to conceptually allocate {args.ram_percent}% RAM ({allocated_ram_gb:.2f} GB) for skyscope-hash-Q.")
-        # conceptual_ram_buffer = allocate_ram_for_mining(args.ram_percent)
-        # if not conceptual_ram_buffer:
-        #     print("Warning: Could not allocate significant RAM buffer, skyscope-hash-Q might be less effective.")
-
-    # Conceptual: Initialize Kaspa Connector
-    # kaspad = KaspaConnector(args.node_url)
-    # if not kaspad.check_connection():
-    #     print(f"Error: Could not connect to kaspad node at {args.node_url}. Please check if kaspad is running and accessible.")
-    #     sys.exit(1)
-    # print(f"Successfully connected to kaspad node: {args.node_url}")
-
-    # Conceptual: Initialize Display Manager
-    # display = DisplayManager()
-
-    # Conceptual: Initialize Rewards Manager
-    # rewards = RewardsManager(args.kaspa_address, args.dev_fee_address, dev_fee_percentage=10)
-
-    # Conceptual: Initialize Hashing Logic
-    # miner_logic = SkyscopeHashQ(cpu_info['cores_to_use'], conceptual_ram_buffer)
-
-
-    # --- Main Mining Loop (Conceptual) ---
-    print("\nStarting SKYSCOPE Kaspa Miner (Conceptual Mode)...")
-    try:
-        # This is highly simplified. A real miner would have multiple threads/processes.
-        # Each thread would:
-        # 1. Get block template from kaspad (via KaspaConnector)
-        # 2. Perform hashing (via HashingLogic)
-        # 3. If solution found, submit to kaspad (via KaspaConnector)
-        # 4. Update stats (via DisplayManager & RewardsManager)
-
-        # Example of how stats might be updated periodically
-        # for i in range(1, 61): # Simulate 1 minute of mining
-            # time.sleep(1)
-            # conceptual_kas_mined_this_tick = 0.001 * cpu_info['cores_to_use'] # Purely illustrative
-            # conceptual_skyscope_mined_this_tick = conceptual_kas_mined_this_tick * 1000 # Illustrative ratio
-
-            # rewards.add_mined_kas(conceptual_kas_mined_this_tick)
-            # total_kas, total_dev_fee = rewards.get_totals()
-
-            # display.update_stats(
-            #     hashrate_mhs=1.5 * cpu_info['cores_to_use'], # Illustrative
-            #     accepted_shares=i * 2,
-            #     rejected_shares=i // 10,
-            #     total_kas_mined=total_kas,
-            #     virtual_skyscope_mined=total_kas * 1000, # Illustrative ratio
-            #     dev_fee_kas=total_dev_fee,
-            #     uptime_seconds=i
-            # )
-            # display.print_stats()
-            # if i % 10 == 0: # Simulate a payout or check for owner allocation
-            #     rewards.process_payouts_and_owner_allocation_check(kaspad) # Conceptual
-
-        # --- Placeholder for actual mining simulation ---
-        print_mining_simulation_header()
-        simulate_mining_progress(args)
-
-
-    except KeyboardInterrupt:
-        print("\nSKYSCOPE Miner stopped by user.")
-    except Exception as e:
-        print(f"\nAn unexpected error occurred: {e}")
-    finally:
-        print("SKYSCOPE Miner shutting down.")
-        # Conceptual: Release any resources, close connections
-        # if 'kaspad' in locals() and kaspad:
-        #     kaspad.close()
-        # if 'conceptual_ram_buffer' in locals() and conceptual_ram_buffer:
-        #     del conceptual_ram_buffer # Python's GC handles this, but good for clarity
+def signal_handler(sig, frame):
+    """Handles Ctrl+C and other termination signals for graceful shutdown."""
+    logger.info("Termination signal received. Initiating graceful shutdown...")
+    shutdown_event.set()
 
 def print_header():
-    print("====================================================================")
-    print("SKYSCOPE KASPA MINER (Conceptual - Python Scaffolding)")
-    print("Vision by Miss Casey Jay Topojani, Skyscope Sentinel Intelligence")
-    print("ABN: 11287984779 | skyscopesentinel@gmail.com | GitHub: skyscope-sentinel")
-    print("====================================================================")
+    """Prints the miner header."""
+    bright_cyan = "\033[96m"
+    yellow = "\033[93m"
+    reset_color = "\033[0m"
+    header = f"""
+{bright_cyan}===================================================================={reset_color}
+          {bright_cyan}SKYSCOPE KASPA MINER - v0.2.0 (Python Edition){reset_color}
+{bright_cyan}===================================================================={reset_color}
+  {yellow}Project by: Miss Casey Jay Topojani, Skyscope Sentinel Intelligence{reset_color}
+  {yellow}ABN: 11287984779 | Email: skyscopesentinel@gmail.com{reset_color}
+  {yellow}GitHub: https://github.com/skyscope-sentinel{reset_color} (Conceptual)
+{bright_cyan}--------------------------------------------------------------------{reset_color}"""
+    print(header)
 
-def print_config(args):
-    print("\nMiner Configuration:")
-    print(f"  Kaspa Wallet Address: {args.kaspa_address}")
-    print(f"  Kaspad Node URL:      {args.node_url}")
-    print(f"  CPU Cores to Use:     {args.cpu_cores if args.cpu_cores > 0 else 'All Available'}")
-    print(f"  RAM Allocation (Conceptual): {args.ram_percent}% for skyscope-hash-Q")
-    print(f"  Dev Fee Address:      {args.dev_fee_address}")
-    print(f"  Log Level:            {args.log_level}")
-    print("--------------------------------------------------------------------")
+def print_config(args, cpu_info_dict, ram_info_dict, conceptual_ram_alloc_info, kaspad_resolved_url):
+    """Prints the effective mining configuration."""
+    bright_cyan = "\033[96m"
+    reset_color = "\033[0m"
+    config_str = f"""
+  Mining Configuration:
+  ---------------------
+  Kaspa Wallet (User):    {args.kaspa_address}
+  Kaspad Node URL:        {args.node_url if args.node_url else f"Auto-Detect (Using: {kaspad_resolved_url if kaspad_resolved_url else 'Not Detected Yet'})"}
+  CPU Cores Detected:     {cpu_info_dict['total_cores_detected']}
+  CPU Cores To Use:       {cpu_info_dict['cores_to_use']}
+  RAM for skyscope-hash-Q: {args.ram_percent}% (Conceptual: {conceptual_ram_alloc_info.get('allocated_gb_conceptual',0):.2f} GB)
 
-def print_mining_simulation_header():
-    print("\n--- Mining Simulation Start (Conceptual) ---")
-    print("This is a simplified simulation. Actual mining involves complex PoW calculations.")
-    print("Displaying conceptual KAS and virtual SKYSCOPE accumulation.")
-    print("Press Ctrl+C to stop.")
-    print("--------------------------------------------------------------------")
-    print("| Time | Virtual SKYSCOPE | KAS Mined (Est.) | Target KAS for Owner |")
-    print("|------|------------------|------------------|----------------------|")
+  Fee & Allocation:
+  -----------------
+  Dev Fee (10%) Address:  {args.dev_fee_address}
+  Owner Allocation Addr:  {args.owner_address}
+  Owner Target:           ${args.owner_target_usd:,.2f} worth of KAS (at ${args.kas_price_usd:.4f}/KAS)
 
-def simulate_mining_progress(args, duration_seconds=60, interval_seconds=5):
+{bright_cyan}--------------------------------------------------------------------{reset_color}"""
+    print(config_str)
+
+def mining_worker_thread_func(worker_id: int, args, kaspad_conn: KaspaConnector, hasher: SkyscopeHashQ, display_mgr: DisplayManager, reward_mgr: RewardsManager):
     """
-    Simulates mining progress for demonstration purposes.
-    In a real miner, this loop would involve actual hashing and communication
-    with the kaspad node.
+    The core logic for a single mining thread/process.
     """
-    owner_kas_target_usd = 50000
-    # Simulate KAS price - in a real app, this would come from an API
-    kas_price_usd = 0.10 # Example: $0.10 per KAS
-    owner_kas_target_kas = owner_kas_target_usd / kas_price_usd
+    logger.info(f"Worker-{worker_id}: Started.")
 
-    total_virtual_skyscope = 0
-    total_kas_mined_gross = 0 # Before dev fee
+    while not shutdown_event.is_set():
+        display_mgr.update_stat("kaspad_connected", kaspad_conn.connected)
+        if not kaspad_conn.connected:
+            logger.warning(f"Worker-{worker_id}: Kaspad disconnected. Main loop should handle reconnection attempt.")
+            display_mgr.print_dashboard() # Update display with disconnected status
+            if shutdown_event.wait(args.retry_delay / 2): break # Check shutdown during wait
+            continue
 
-    for elapsed_time in range(0, duration_seconds + 1, interval_seconds):
-        # Illustrative mining rate: 0.01 KAS per core per interval, plus RAM bonus
-        cores_to_use = 4 # Assume 4 cores for simulation if args.cpu_cores is 0
-        if args.cpu_cores > 0:
-            cores_to_use = args.cpu_cores
+        # Get new block template
+        logger.debug(f"Worker-{worker_id}: Requesting block template...")
+        block_template = kaspad_conn.get_block_template(args.kaspa_address)
+        display_mgr.update_stat("kaspad_connected", kaspad_conn.connected) # Update after call
 
-        kas_this_interval = (0.01 * cores_to_use) * (1 + args.ram_percent / 100.0 * 0.5) # RAM gives up to 50% conceptual bonus
+        if block_template:
+            display_mgr.update_stat("last_block_template_time", time.time())
+            display_mgr.update_stat("current_difficulty", block_template.get("target_difficulty_str", "N/A")[:16]+"...")
+            display_mgr.update_stat("current_height", block_template.get("height", "N/A"))
+            logger.info(f"Worker-{worker_id}: New job {block_template.get('job_id')} received. Height: {block_template.get('height')}")
 
-        total_kas_mined_gross += kas_this_interval
-        dev_fee_this_interval = kas_this_interval * 0.10
-        kas_after_dev_fee = kas_this_interval * 0.90
+            solution = hasher.mine_block(block_template,
+                                         target_nonce_range=args.nonce_iterations_per_job,
+                                         hashes_per_update=args.hashes_per_display_update)
 
-        # Virtual SKYSCOPE could be a multiple of KAS or based on effort
-        virtual_skyscope_this_interval = kas_this_interval * 100
-        total_virtual_skyscope += virtual_skyscope_this_interval
+            if shutdown_event.is_set(): break
 
-        # Conceptual owner allocation
-        # In a real system, this would involve actual transfers
-        remaining_owner_target_kas = max(0, owner_kas_target_kas - (total_kas_mined_gross * 0.90))
+            if solution:
+                logger.info(f"Worker-{worker_id}: Solution found for job {solution.get('job_id')}! Nonce: {solution.get('nonce')}")
+                if kaspad_conn.submit_block(solution["header_with_nonce_hex"], solution.get("job_id")):
+                    display_mgr.increment_stat("accepted_shares")
+
+                    # Process rewards (this is conceptual for solo mining block find)
+                    payouts = reward_mgr.process_mined_reward(CONCEPTUAL_KAS_BLOCK_REWARD) # Use placeholder reward
+                    for p in payouts: logger.info(f"Conceptual Payout: {p['amount_kas']:.4f} KAS to {p['type']} ({p['address'][:15]}...)")
+
+                    display_mgr.log_message(f"Worker-{worker_id}: Solution ACCEPTED by network!", "SUCCESS")
+                else:
+                    display_mgr.increment_stat("rejected_shares")
+                    display_mgr.increment_stat("errors")
+                    display_mgr.log_message(f"Worker-{worker_id}: Solution REJECTED by network. Error: {kaspad_conn.last_error_message}", "ERROR")
+            # No solution found in nonce range, or an error in mine_block, just loop for new job
+
+            # Update aggregated display stats (main thread might do this based on worker reports)
+            # For single conceptual worker, direct update is fine for now
+            current_hr_hs = hasher.get_session_hashrate()
+            display_mgr.update_stat("hashrate_mhs", current_hr_hs / 1_000_000)
+
+            stats = reward_mgr.get_cumulative_stats()
+            display_mgr.update_stat("total_kas_mined_net_user", stats['cumulative_user_net_kas'])
+            display_mgr.update_stat("dev_fee_kas_cumulative", stats['cumulative_dev_fee_kas'])
+            display_mgr.update_stat("owner_kas_cumulative", stats['cumulative_owner_allocation_kas'])
+            owner_target_kas = stats['owner_allocation_target_kas']
+            display_mgr.update_stat("owner_kas_target_remaining", max(0, (owner_target_kas if isinstance(owner_target_kas, (int,float)) else float('inf')) - stats['cumulative_owner_allocation_kas']))
+            display_mgr.update_stat("virtual_skyscope_mined", stats['total_gross_kas_processed'] * 100) # Virtual SKYSCOPE based on total gross KAS processed
+
+        else: # No block template
+            display_mgr.increment_stat("errors")
+            logger.warning(f"Worker-{worker_id}: Failed to get block template. Error: {kaspad_conn.last_error_message}. Retrying after delay...")
+            if shutdown_event.wait(args.retry_delay): break
+
+    logger.info(f"Worker-{worker_id}: Stopping.")
 
 
-        print(f"| {elapsed_time:4}s | {total_virtual_skyscope:16.2f} | {total_kas_mined_gross * 0.90:16.4f} | {remaining_owner_target_kas:20.2f} |")
+def main_mining_orchestrator(args, kaspad_conn: KaspaConnector, hasher: SkyscopeHashQ, display_mgr: DisplayManager, reward_mgr: RewardsManager):
+    """Main orchestrator for the mining loop and display updates."""
+    logger.info("Starting SKYSCOPE Kaspa Miner Orchestrator...")
 
-        if elapsed_time < duration_seconds:
-            time.sleep(interval_seconds)
+    # Initial connection and status check
+    if not kaspad_conn.check_node_status(retry_attempts=3): # More retries for initial connect
+        display_mgr.log_message(f"CRITICAL: Could not connect/verify kaspad at {kaspad_conn.resolved_node_url or 'auto-detected location'}. Error: {kaspad_conn.last_error_message}", "CRITICAL")
+        return
 
-    print("--------------------------------------------------------------------")
-    print("--- Mining Simulation Complete (Conceptual) ---")
+    display_mgr.set_kaspad_connected(True)
+    display_mgr.update_stat("node_version", kaspad_conn.node_info.get("server_version", "N/A"))
+    logger.info(f"Successfully connected to kaspad. Node: {kaspad_conn.resolved_node_url}, Version: {kaspad_conn.node_info.get('server_version', 'N/A')}, Synced: {kaspad_conn.node_info.get('is_synced')}")
 
+    # --- For this version, run a single conceptual worker in the main thread ---
+    # In a real app, you'd spawn `args.cpu_cores` threads or processes.
+    # Each would call a modified mining_worker_thread_func or similar.
+    # Stats would be aggregated via thread-safe queues or shared memory.
+
+    # This loop replaces the direct call to mining_worker_thread_func to allow periodic display updates
+    # even if mining_worker_thread_func blocks for a long time (due to Python hashing slowness).
+    # A more robust solution would use threading for hashing and a separate thread for display updates.
+
+    last_display_update_time = 0
+    while not shutdown_event.is_set():
+        mining_worker_thread_func(0, args, kaspad_conn, hasher, display_mgr, reward_mgr, args.kaspa_address) # Simplified call
+
+        # If mining_worker_thread_func returns (e.g. after one job attempt), update display and loop or sleep
+        current_time = time.time()
+        if current_time - last_display_update_time > display_mgr.print_interval:
+            display_mgr.print_dashboard(force_print=True) # Force print as worker might not have
+            last_display_update_time = current_time
+
+        if shutdown_event.is_set():
+            break
+        # Small delay before fetching next job if previous one finished quickly or failed
+        time.sleep(0.1)
+
+    logger.info("Main mining orchestrator loop finished.")
+
+
+def main():
+    # Setup signal handlers for graceful shutdown
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+
+    parser = argparse.ArgumentParser(
+        description="SKYSCOPE Miner: Python-based CPU Miner for Kaspa (kHeavyHash).",
+        formatter_class=argparse.RawTextHelpFormatter,
+        epilog=f"""
+Example CLI:
+  python skyscope_miner.py kaspa:yourwalletaddress --cpu-cores 0 --ram-percent 25
+
+Notes:
+- This miner uses a Python implementation of kHeavyHash, which will be significantly
+  slower than optimized C/C++/Rust miners. It's for functional demonstration.
+- The 'skyscope-hash-Q' RAM boost is a conceptual feature; its performance impact
+  in this Python version is illustrative and part of ongoing R&D.
+- Ensure kaspad is running, synced, and accessible. Default auto-detection targets 127.0.0.1:{KaspaConnector.DEFAULT_KASPAD_PORT}.
+"""
+    )
+    parser.add_argument( "kaspa_address", help="Your Kaspa wallet address for receiving mining rewards.")
+    parser.add_argument( "--node-url", default=None, type=str, help=f"URL of kaspad (e.g., localhost:{KaspaConnector.DEFAULT_KASPAD_PORT}). Default: Auto-Detect")
+    parser.add_argument( "--cpu-cores", type=int, default=0, help="Number of CPU cores for mining. (0 for all available - default: %(default)s)")
+    parser.add_argument( "--ram-percent", type=int, choices=[0, 25, 50, 75, 80], default=0, help="Conceptual RAM % for skyscope-hash-Q. (default: %(default)s)")
+    parser.add_argument( "--dev-fee-address", type=str, default="kaspa:qqggvdrxjqdgwql4aac8hg0pq2v4z5p46l86f98hq7ax29k7x55v7sycs9kvm", help="Developer fee Kaspa address.")
+    parser.add_argument( "--owner-address", type=str, default="kaspa:qqggvdrxjqdgwql4aac8hg0pq2v4z5p46l86f98hq7ax29k7x55v7sycs9kvm", help="Owner's KAS address for allocation.") # Same as dev for now
+    parser.add_argument( "--owner-target-usd", type=float, default=50000.0, help="Target USD value for owner's KAS allocation. Default: %(default)s USD.")
+    parser.add_argument( "--kas-price-usd", type=float, default=0.10, help="Initial KAS price in USD for owner allocation. Default: %(default)s USD.")
+    parser.add_argument( "--log-level", type=str, choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'], default='INFO', help="Logging level. Default: %(default)s")
+    parser.add_argument( "--retry-delay", type=int, default=10, help="Delay (s) before kaspad connection/job retries. Default: %(default)s s.")
+    parser.add_argument( "--nonce-iterations-per-job", type=int, default=50000, help="Max nonce iterations per template before refresh. Default: %(default)s (low for Python).") # Kept low for Python
+    parser.add_argument( "--hashes-per-display-update", type=int, default=50, help="Update display roughly every N hashes. Default: %(default)s.") # Lower for Python
+
+    args = parser.parse_args()
+    args.resolved_kaspad_url = args.node_url # Will be updated by connector if auto-detected
+
+    logging.basicConfig(level=getattr(logging, args.log_level.upper(), logging.INFO),
+                        format='%(asctime)s - %(levelname)s - [%(threadName)s] %(filename)s:%(lineno)d - %(message)s')
+
+    print_header()
+
+    try:
+        cpu_info = core_utils.get_cpu_info(args.cpu_cores)
+        ram_info = core_utils.get_ram_info()
+        conceptual_ram_alloc = core_utils.allocate_ram_for_mining_conceptual(ram_info, args.ram_percent)
+    except Exception as e:
+        logger.critical(f"Error initializing system utilities (CPU/RAM): {e}. Ensure psutil is installed.", exc_info=True)
+        sys.exit(1)
+
+    # Initialize KaspaConnector, attempting auto-detection if node_url is None
+    kaspad_conn = KaspaConnector(args.node_url, user_agent=f"SKYSCOPEMiner/{args.log_level}") # Pass user_agent
+    if not kaspad_conn.resolved_node_url: # If node_url was None, find_and_connect needs to run
+        if not kaspad_conn.find_and_connect_local_kaspad():
+            logger.critical(f"Failed to auto-detect and connect to local kaspad. {kaspad_conn.last_error_message}")
+            # No need to print config if we can't even resolve kaspad URL
+            sys.exit(1)
+    args.resolved_kaspad_url = kaspad_conn.resolved_node_url # Store resolved URL back into args for display
+
+    print_config(args, cpu_info, ram_info, conceptual_ram_alloc, args.resolved_kaspad_url)
+
+    try:
+        display_mgr = DisplayManager(args.kaspa_address)
+        reward_mgr = RewardsManager(
+            user_kaspa_address=args.kaspa_address,
+            dev_fee_address=args.dev_fee_address,
+            owner_kaspa_address=args.owner_address,
+            owner_allocation_target_usd=args.owner_target_usd
+        )
+        reward_mgr.update_kas_usd_price(args.kas_price_usd)
+
+        hasher = SkyscopeHashQ(cpu_info, args.ram_percent, conceptual_ram_alloc)
+    except ValueError as e:
+        logger.critical(f"Configuration Error for miner components: {e}", exc_info=True)
+        sys.exit(1)
+    except Exception as e:
+        logger.critical(f"Unexpected error initializing miner components: {e}", exc_info=True)
+        sys.exit(1)
+
+    try:
+        main_mining_orchestrator(args, kaspad_conn, hasher, display_mgr, reward_mgr)
+    except KeyboardInterrupt:
+        logger.info("SKYSCOPE Miner stopped by user (main context).")
+    except Exception as e:
+        logger.critical(f"A critical error occurred in the main mining orchestrator: {e}", exc_info=True)
+    finally:
+        logger.info("SKYSCOPE Miner shutting down completely.")
+        shutdown_event.set() # Ensure all threads know to stop
+        if 'kaspad_conn' in locals() and kaspad_conn:
+            kaspad_conn.close()
 
 if __name__ == "__main__":
-    # Create the skyscope_miner directory if it doesn't exist when running directly
-    # This is mainly for when the tool executes this script.
-    # In a real package, this would be handled by setup.
-    import os
-    if not os.path.exists("skyscope_miner") and os.path.basename(os.getcwd()) != "skyscope_miner":
-        try:
-            os.makedirs("skyscope_miner", exist_ok=True)
-            # Check if we are in the right place to call main or if this is part of a tool execution
-            # This is a bit of a hack for the tool's execution environment.
-            if os.path.basename(sys.argv[0]) == "skyscope_miner.py":
-                 main()
-        except Exception as e:
-            print(f"Could not create skyscope_miner directory: {e}")
-            # Fallback or decide how to handle if directory creation fails
-            # For now, just try to run main if the script is called directly
-            if os.path.basename(sys.argv[0]) == "skyscope_miner.py":
-                 main()
-
-    elif os.path.basename(sys.argv[0]) == "skyscope_miner.py":
-        main()
-    # If not called directly (e.g. imported), main() is not run automatically.
-    # The tool might execute this in a way that __name__ is not "__main__" initially.
-    # The above logic tries to ensure main() runs if the script is the entry point.
-    # A more robust way for the tool might be to call skyscope_miner.main() explicitly
-    # after ensuring the file is in the correct path.
-
-    # Simplified call for direct execution if the above logic is too complex for the environment
-    # main()
-    # The tool seems to handle the execution context, so a direct call to main()
-    # might be what it expects if the file path is already correct.
-    # The above structure with __name__ == "__main__" is standard Python.
-    # Final attempt to ensure main runs if this script is the target:
-    if __name__ == "__main__" and os.path.basename(sys.argv[0]) == "skyscope_miner.py":
-        pass # main() is already called if it's the entry point
-    elif os.path.basename(sys.argv[0]) == "skyscope_miner.py": # If it's executed but not as __main__
-        main()
-    # If it's imported, main() won't run, which is correct.It appears there was an issue with the previous `create_file_with_block` call for `skyscope_miner/skyscope_miner.py`. The tool output was empty, which usually indicates the operation didn't complete as expected or an error occurred silently.
-
-I will retry creating `skyscope_miner/skyscope_miner.py` with the same content. I'll also simplify the `if __name__ == "__main__":` block at the end to a standard pattern to avoid potential complexities with the execution environment.
+    main()
